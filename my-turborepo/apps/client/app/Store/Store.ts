@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import cartSlice from "../Store/features/cartSlice"
+import cartSlice from "./features/cartSlice"
 import { getDataFromBrowwer,saveDatainBrowser } from './localstorage';
 const persistedState = getDataFromBrowwer()
 
