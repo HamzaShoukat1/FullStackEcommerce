@@ -1,0 +1,7 @@
+{
+	"dependencies": {
+		"Ecommerce": "link:",
+		"turb": "^0.1.2",
+		"turbo": "^2.8.20"
+	}
+}
