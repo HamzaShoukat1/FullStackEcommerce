@@ -29,6 +29,6 @@ model Category {
   name      String
   slug      String    @unique
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   products  Product[]
 }
