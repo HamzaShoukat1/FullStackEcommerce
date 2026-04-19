@@ -16,6 +16,7 @@ import { AppModule } from './app.module';
 
 // import helmet from 'helmet';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 
 
@@ -26,6 +27,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     // Security middleware
+    app.useGlobalInterceptors(new ResponseInterceptor());
     // app.use(helmet());
 
     const allowedOrigins = ['http://localhost:3000']

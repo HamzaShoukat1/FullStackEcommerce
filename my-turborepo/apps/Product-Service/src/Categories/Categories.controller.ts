@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Inject, Patch } from '@nestjs/common';
 import { CategoriesService } from './Categories.service.js';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/index.js';
 
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    @Inject(CategoriesService)
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   @Get()
   async getAll() {
@@ -23,7 +26,7 @@ export class CategoriesController {
     return this.categoriesService.create(data);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() data: UpdateCategoryDto

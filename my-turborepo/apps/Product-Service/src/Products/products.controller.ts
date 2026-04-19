@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Inject, Patch } from '@nestjs/common';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto, UpdateProductDto } from './dto/index.js';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    @Inject(ProductsService)
+    private readonly productsService: ProductsService,
+  ) {}
 
   @Get()
   async getAll() {
@@ -18,11 +21,10 @@ export class ProductsController {
 
   @Post()
   async create(@Body() data: CreateProductDto) {
-    console.log("service", this.productsService)
     return this.productsService.create(data);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() data: UpdateProductDto
