@@ -17,6 +17,8 @@
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/platform-express": "^11.1.17",
+        "@repo/order-db": "workspace:*",
+
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },

@@ -4,3 +4,4 @@ node_modules
 
 /src/generated/prisma
 packages/Product-db/generated 
+packages/order-db/generated
