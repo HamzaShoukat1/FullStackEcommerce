@@ -1,0 +1,1 @@
+module,controller,decorators,service,guards,pipes

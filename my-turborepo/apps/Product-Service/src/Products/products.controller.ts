@@ -1,35 +1,34 @@
-import { Controller, Get, Post, Delete, Param, Body, Inject, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Inject, Patch, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto, UpdateProductDto } from './dto/index.js';
 
 @Controller('products')
 export class ProductsController {
   constructor(
-    @Inject(ProductsService)
-    private readonly productsService: ProductsService,
+    @Inject(ProductsService) private readonly productsService: ProductsService,
   ) {}
 
   @Get()
-  async getAll() {
-    return this.productsService.getAll();
+  async getAll(@Query() query: any) {
+    return this.productsService.getAll(query);
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: string) {
-    return this.productsService.getById(Number(id));
+  async getOne(@Param('id',ParseIntPipe) id: number) {
+    return this.productsService.getById(id);
   }
 
   @Post()
-  async create(@Body() data: CreateProductDto) {
-    return this.productsService.create(data);
+  async create(@Body() dto: CreateProductDto) {
+    return this.productsService.create(dto);
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() data: UpdateProductDto
+    @Body() dto: UpdateProductDto
   ) {
-    return this.productsService.update(Number(id), data);
+    return this.productsService.update(Number(id), dto);
   }
 
   @Delete(':id')

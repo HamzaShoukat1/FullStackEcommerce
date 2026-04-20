@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, Inject, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Inject, Patch, ParseIntPipe } from '@nestjs/common';
 import { CategoriesService } from './Categories.service.js';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/index.js';
 
@@ -8,7 +8,7 @@ export class CategoriesController {
   constructor(
     @Inject(CategoriesService)
     private readonly categoriesService: CategoriesService,
-  ) {}
+  ) { }
 
   @Get()
   async getAll() {
@@ -21,21 +21,21 @@ export class CategoriesController {
   }
 
   @Post()
-  async create(@Body() data: CreateCategoryDto) {
+  async create(@Body() dto: CreateCategoryDto) {
 
-    return this.categoriesService.create(data);
+    return this.categoriesService.create(dto);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
-    @Body() data: UpdateCategoryDto
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateCategoryDto
   ) {
-    return this.categoriesService.update(Number(id), data);
+    return this.categoriesService.update(id, dto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.categoriesService.delete(Number(id));
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.categoriesService.delete(id);
   }
 }

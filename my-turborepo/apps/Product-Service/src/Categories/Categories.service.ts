@@ -1,6 +1,5 @@
 import {
   Injectable,
-  NotFoundException,
 } from "@nestjs/common";
 import { CreateCategoryDto } from "./dto/index.js";
 import { UpdateCategoryDto } from "./dto/index.js";
@@ -12,9 +11,7 @@ export class CategoriesService {
   
   async getAll() {
     const  allCategories =  await prisma.category.findMany();
-    if(!allCategories){
-      throw new NotFoundException("No categories found");
-    }
+
     return allCategories;
   }
 
@@ -23,9 +20,7 @@ export class CategoriesService {
       where: { id },
     });
 
-    if (!category) {
-      throw new NotFoundException("Category not found");
-    }
+
 
     return category;
   }
@@ -35,9 +30,7 @@ export class CategoriesService {
       const createCategory =  await prisma.category.create({
         data: data as Prisma.CategoryCreateInput,
       });
-      if(!createCategory){
-        throw new NotFoundException("Failed to create category");
-      }
+ 
       return createCategory
     } 
   
@@ -50,9 +43,7 @@ export class CategoriesService {
           ...(data.slug && { slug: data.slug }),
         },
       });
-      if(!updateCategory){
-        throw new NotFoundException("Category not found");
-      }
+   
       return updateCategory
     } 
   
@@ -61,9 +52,7 @@ export class CategoriesService {
       const deleteCategory =  await prisma.category.delete({
         where: { id },
       });
-      if(!deleteCategory){
-        throw new NotFoundException("Category not found");
-      }
+
       return deleteCategory
     } 
   
