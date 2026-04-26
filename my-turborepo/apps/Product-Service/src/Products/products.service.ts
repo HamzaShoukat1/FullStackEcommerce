@@ -8,8 +8,6 @@ import { prisma } from "@repo/product-db";
 import { Prisma } from "@repo/product-db";
 @Injectable()
 export class ProductsService {
-
-
   async getAll(query: any) {
     const { sort, category, search, limit } = query
 

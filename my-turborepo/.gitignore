@@ -13,6 +13,7 @@ node_modules
 .env.production.local
 packages/Product-db/generated 
 packages/order-db/generated
+packages/auth-db/generated
 # Testing
 coverage
 
