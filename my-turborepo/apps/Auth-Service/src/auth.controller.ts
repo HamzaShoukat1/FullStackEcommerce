@@ -45,8 +45,11 @@ export class AuthController {
     @UseGuards(IsAuthenticatedGuard)
     @Get('me')
     async me(@Req() req: Request) {
-        return this.authService.currentUser((req as any).user.sub);
+        const userId = (req as any).user.sub;
+        return this.authService.currentUser(userId);
+        // return this.authService.currentUser((req as any).user.sub);
     }
+
 
     //logout
     @UseGuards(IsAuthenticatedGuard)

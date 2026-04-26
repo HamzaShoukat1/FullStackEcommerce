@@ -77,17 +77,16 @@ export class AuthService {
 
     };
 
-    async logout(userId:number,refreshToken?:string) {
-        if(!refreshToken){
-            throw new UnauthorizedException("Refresh token is required for logout");
-        }
+    async logout(userId: number, refreshToken?: string) {
+        if (!refreshToken) {
 
-        await prisma.refreshToken.deleteMany({
-            where:{
-                userId,
-                token:refreshToken
-            }
-        })
+            await prisma.refreshToken.deleteMany({
+                where: {
+                    userId,
+                    token: refreshToken
+                }
+            })
+        }
 
         return { message: 'Logged out successfully' };
     }
@@ -138,10 +137,10 @@ export class AuthService {
     private async responseWrapperwithTokens(user: User) {
         const tokens = await this.generateTokens(user);
         await prisma.refreshToken.create({
-            data:{
-                userId:user.id,
-                token:tokens.refreshToken,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            data: {
+                userId: user.id,
+                token: tokens.refreshToken,
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             }
         })
         return {
