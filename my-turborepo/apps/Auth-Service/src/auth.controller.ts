@@ -7,6 +7,7 @@ import {
     Get,
     UseGuards,
     Inject,
+    UnauthorizedException,
 } from '@nestjs/common';
 
 
@@ -62,6 +63,17 @@ export class AuthController {
 
         return this.authService.logout(userId, refreshToken);
     };
+
+    @Post('refresh')
+    async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const refreshToken = req.cookies?.refreshToken;
+        if (!refreshToken) {
+            throw new UnauthorizedException("Refresh token not found");
+        }
+        const result = await this.authService.refreshTokens(refreshToken);
+        this.setAuthCookies(res, result.tokens);
+        return result.user;
+    }
 
     //cookie handler
     private setAuthCookies(res: Response, tokens: { accessToken: string, refreshToken: string }) {

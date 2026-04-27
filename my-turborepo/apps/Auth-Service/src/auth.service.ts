@@ -67,6 +67,7 @@ export class AuthService {
         if (!Number.isInteger(numericUserId)) {
             throw new BadRequestException("Invalid user id");
         }
+
         const user = await prisma.user.findUnique({
             where: { id: numericUserId }
         });
@@ -89,10 +90,60 @@ export class AuthService {
         }
 
         return { message: 'Logged out successfully' };
+    };
+
+async refreshTokens(refreshToken: string) {
+    let payload: TokenPayload;
+
+    try {
+        payload = await this.jwtService.verifyAsync(refreshToken, {
+            secret: getRefreshTokenSecret(),
+        });
+    } catch {
+        throw new UnauthorizedException("Invalid refresh token");
     }
 
+    const userId = payload.sub;
 
+    const matchedToken = await prisma.refreshToken.findUnique({
+        where: { token: refreshToken }
+    });
 
+    if (!matchedToken) {
+        await prisma.refreshToken.deleteMany({
+            where: { userId }
+        });
+        throw new UnauthorizedException("Refresh token reuse detected");
+    }
+
+    await prisma.refreshToken.delete({
+        where: { id: matchedToken.id }
+    });
+
+    // 👤 get user
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    if (!user) {
+        throw new NotFoundException("User not found");
+    }
+
+    const tokens = await this.generateTokens(user);
+
+    await prisma.refreshToken.create({
+        data: {
+            userId,
+            token: tokens.refreshToken,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        }
+    });
+
+    return {
+        tokens,
+        user: this.mapUser(user as UserResponseDto)
+    };
+}
 
     //token gen
 
