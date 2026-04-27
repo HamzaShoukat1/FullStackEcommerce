@@ -12,8 +12,9 @@ import {
 
 
 import { AuthService } from './auth.service';
+import type { AuthRequest } from '@repo/shared'
 import { LoginDto, SignupDto } from './dto';
-import type { Response, Request } from 'express';
+import type { Response } from 'express';
 import { IsAuthenticatedGuard } from '@repo/shared';
 // import { ACCESS_COOKIE_OPTION, REFRESH_COOKIE_OPTION } from './types';
 import { ACCESS_COOKIE_OPTION, REFRESH_COOKIE_OPTION } from '@repo/shared';
@@ -45,9 +46,14 @@ export class AuthController {
     //current user
     @UseGuards(IsAuthenticatedGuard)
     @Get('me')
-    async me(@Req() req: Request) {
-        const userId = (req as any).user.sub;
-        return this.authService.currentUser(userId);
+    async me(@Req() req: AuthRequest) {
+        const user = req.user
+        return {
+            id: user.sub,
+            email: user.email,
+            role: user.role
+        }
+
         // return this.authService.currentUser((req as any).user.sub);
     }
 
@@ -55,18 +61,18 @@ export class AuthController {
     //logout
     @UseGuards(IsAuthenticatedGuard)
     @Post('logout')
-    async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    async logout(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
         res.clearCookie('accessToken', { ...ACCESS_COOKIE_OPTION });
         res.clearCookie('refreshToken', { ...REFRESH_COOKIE_OPTION });
-        const userId = (req as any).user.sub;
-        const refreshToken = req.cookies?.refreshToken;
+        const userId = req.user.sub;
+        const refreshToken = req.user.cookies?.refreshToken;
 
         return this.authService.logout(userId, refreshToken);
     };
-
+    @UseGuards(IsAuthenticatedGuard)
     @Post('refresh')
-    async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const refreshToken = req.cookies?.refreshToken;
+    async refresh(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
+        const refreshToken = req.user.cookies?.refreshToken;
         if (!refreshToken) {
             throw new UnauthorizedException("Refresh token not found");
         }

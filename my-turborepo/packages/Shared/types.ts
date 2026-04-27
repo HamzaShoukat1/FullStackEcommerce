@@ -36,3 +36,17 @@ export const REFRESH_COOKIE_OPTION:CookieOptions = {
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 }
+export interface AuthRequest extends Request {
+  user: {
+    sub: number;
+    email: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    cookies?: {
+        accessToken?: string;   
+        refreshToken?: string;
+    }
+  };
+}
