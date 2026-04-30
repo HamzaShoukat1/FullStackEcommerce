@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductType } from "@/app/types";
+import { ProductDTO } from "@repo/shared";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/usereduxhook";
@@ -11,7 +11,7 @@ const ProductInteraction = ({
   selectedSize,
   selectedColor,
 }: {
-  product: ProductType;
+  product: ProductDTO;
   selectedSize: string;
   selectedColor: string;
 }) => {

@@ -1,15 +1,8 @@
-import { Controller, Get, Module } from '@nestjs/common';
+import {  Module } from '@nestjs/common';
+import {OrderModule} from './Order/Order.module.js'
 
-
-@Controller() export class AppController {
-    @Get()
-    getHello(): string {
-        return 'Hello from Order-Service!';
-    };
-    
-}
 
 @Module({
-    controllers:[AppController]
+    imports:[OrderModule]
 })
 export class AppModule {}

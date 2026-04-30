@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { User } from '@repo/auth-db';
+import type { User } from '@repo/db';
 
 declare global {
   namespace Express {

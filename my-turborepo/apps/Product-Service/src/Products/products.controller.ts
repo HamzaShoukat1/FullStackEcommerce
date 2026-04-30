@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, Inject, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Inject, Patch, Query, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto, UpdateProductDto } from './dto/index.js';
 import { IsAuthenticatedGuard, Roles, RolesGuard } from '@repo/shared';
@@ -9,19 +9,19 @@ export class ProductsController {
   ) { }
 
   @Get()
-  async getAll(@Query() query: any) {
+  async getAll(@Query() query: any): Promise<unknown> {
     return this.productsService.getAll(query);
   }
 
   @Get(':id')
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string): Promise<unknown> {
     return this.productsService.getById(id);
   }
 
   @UseGuards(IsAuthenticatedGuard, RolesGuard)
   @Roles("ADMIN") //roles = ['ADMIN]
   @Post()
-  async create(@Body() dto: CreateProductDto) {
+  async create(@Body() dto: CreateProductDto): Promise<unknown> {
     return this.productsService.create(dto);
   }
 
@@ -31,13 +31,13 @@ export class ProductsController {
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateProductDto
-  ) {
-    return this.productsService.update(Number(id), dto);
+  ): Promise<unknown> {
+    return this.productsService.update(id, dto);
   }
   @UseGuards(IsAuthenticatedGuard, RolesGuard)
   @Roles("ADMIN")
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.productsService.delete(Number(id));
+  async delete(@Param('id') id: string): Promise<unknown> {
+    return this.productsService.delete(id);
   }
 }

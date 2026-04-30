@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// Models
+model User {
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  passwordHash    String
+  firstName       String?
+  lastName        String?
+  address         String?
+  role            UserRole       @default(USER)
+  isEmailVerified Boolean        @default(false)
+  refreshTokens   RefreshToken[]
+  orders          Order[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+}
+
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  token     String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id               String      @id @default(uuid())
+  name             String
+  shortDescription String
+  description      String
+  price            Decimal
+  sizes            String[]
+  colors           String[]
+  images           Json
+  categorySlug     String?
+  category         Category?   @relation(fields: [categorySlug], references: [slug])
+  orderItems       OrderItem[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email           String
+  amount          Decimal
+  status          OrderStatus @default(PENDING)
+  products           OrderItem[]
+  shippingAddress Json
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}

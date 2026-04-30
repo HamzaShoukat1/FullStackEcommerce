@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CartItemsType } from "@/app/types";
+import { CartItemDTO } from "@repo/shared";
 
 
 
 export type CartState = {
-  cartItems: CartItemsType[];
+  cartItems: CartItemDTO[];
   totalAmount: number;
   totalQuantity: number;
 };

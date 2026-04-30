@@ -1,7 +1,6 @@
 "use client"
-import {  shippingformInputs } from "@/app/types";
+import {shippingformInputs} from "@repo/shared"
 import ShippingAdressForm from "@/components/shared/ShippingAdressForm";
-import PaymentForm from "@/components/shared/PaymentForm";
 import ShoppingForm from "@/components/shared/ShoppingForm";
 import { ArrowRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -127,7 +126,10 @@ const subtotal = useMemo(() =>
 
               <ShoppingForm />
             </ClientOnly>
-          ) : activeStep === 2 ? (<ShippingAdressForm setShippingform={setShippingform} />) : activeStep === 3 && Shippingform ? (<PaymentForm />) : <p className="text-sm text-gray-500">please fill in the shipping form to continue</p>}
+          ) : activeStep === 2 ? (<ShippingAdressForm setShippingform={setShippingform} />) : activeStep === 3 && Shippingform ?
+          //  (<PaymentForm />) 
+          "todoo add stripe form here"
+            : <p className="text-sm text-gray-500">please fill in the shipping form to continue</p>}
 
 
         </div>

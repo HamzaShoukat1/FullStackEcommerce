@@ -1,10 +1,9 @@
 
-import {  ProductType } from "@/app/types"
 import Image from "next/image"
 import ProductInteraction from "@/components/shared/ProductInteraction"
+import {  ProductDTO} from "@repo/shared"
 
-
-const product: ProductType = {
+const product: ProductDTO = {
     id: 1,
     name: "Nike Dri Flex T-Shirt",
     shortDescription:
@@ -15,6 +14,9 @@ const product: ProductType = {
     sizes: ["s", "m", "l"],
     colors: ["white", "pink"],
     images: { white: "/products/4w.png", pink: "/products/4p.png" },
+    categorySlug: "t-shirts",
+      createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
 }
 
 export const generateMetadata =  async ({params}:{params:{id:string}})=> {
@@ -34,8 +36,8 @@ export default async function Page({
 }) {
     const { size, color } = await searchParams;
 
-    const selectedSize = size || product.sizes[0]
-    const selectedColor = color || product.colors[0]
+    const selectedSize = size || product.sizes[0]!
+    const selectedColor = color || product.colors[0]!
 
     return (
         <div className="flex flex-col gap-4 lg:flex-row md:gap-12 mt-12">

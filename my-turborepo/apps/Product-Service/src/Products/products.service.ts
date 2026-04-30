@@ -4,8 +4,7 @@ import {
 } from "@nestjs/common";
 import { CreateProductDto } from "./dto/index.js";
 import { UpdateProductDto } from "./dto/index.js";
-import { prisma } from "@repo/product-db";
-import { Prisma } from "@repo/product-db";
+import { prisma, Prisma } from "@repo/db";
 @Injectable()
 export class ProductsService {
   async getAll(query: any) {
@@ -45,9 +44,9 @@ export class ProductsService {
   }
 
 
-  async getById(id: number) {
+  async getById(id: string) {
     const product = await prisma.product.findUnique({
-      where: { id:Number(id) },
+      where: { id },
     });
 
 
@@ -60,7 +59,7 @@ export class ProductsService {
       name: data.name,
       shortDescription: data.shortDescription || "",
       description: data.description || "",
-      price: data.price,
+      price: Number(data.price),
       sizes: data.sizes || [],
       colors: data.colors || [],
       images: data.images || {},
@@ -89,12 +88,12 @@ export class ProductsService {
       throw new NotFoundException("Category not found");
     }
   }
-async update(id: number, data: UpdateProductDto) {
+async update(id: string, data: UpdateProductDto) {
   const updateData: Prisma.ProductUpdateInput = {
     ...(data.name !== undefined && { name: data.name }),
     ...(data.shortDescription !== undefined && { shortDescription: data.shortDescription }),
     ...(data.description !== undefined && { description: data.description }),
-    ...(data.price !== undefined && { price: data.price }),
+    ...(data.price !== undefined && { price: Number(data.price) }),
     ...(data.sizes !== undefined && { sizes: data.sizes }),
     ...(data.colors !== undefined && { colors: data.colors }),
     ...(data.images !== undefined && { images: data.images }),
@@ -113,7 +112,7 @@ async update(id: number, data: UpdateProductDto) {
 }
 
 
-  async delete(id: number) {
+  async delete(id: string) {
     const deleteProduct = await prisma.product.delete({
       where: { id },
     });

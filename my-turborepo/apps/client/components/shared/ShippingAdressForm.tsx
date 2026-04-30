@@ -1,5 +1,5 @@
 
-import { shippingformInputs, shippingFormSchema } from "@/app/types"
+import { shippingformInputs, shippingFormSchema } from "@repo/shared"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowRight } from "lucide-react"
 import { useRouter } from 'next/navigation';

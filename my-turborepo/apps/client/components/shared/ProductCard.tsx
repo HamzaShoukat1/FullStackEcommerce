@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ProductType } from "@/app/types";
+import { ProductDTO } from "@repo/shared";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useAppDispatch } from "@/app/hooks/usereduxhook";
 import { addToCart } from "@/app/Store/features/cartSlice";
 
-export default function ProductCard({ product }: { product: ProductType }) {
+export default function ProductCard({ product }: { product: ProductDTO }) {
   const dispatch = useAppDispatch()
   const [productsetType, setproductsetType] = useState({
-    size: product.sizes[0],
-    color: product.colors[0]
+    size: product.sizes[0]!,
+    color: product.colors[0]!
   })
   console.log(productsetType)
   type producttype = {
@@ -44,7 +44,7 @@ const handelAddtoCart = ()=> {
       <Link href={`/products/${product.id}`}>
         <div className="relative w-full aspect-2/3">
           <Image
-            src={product.images?.[productsetType.color] || ""}
+            src={(product.images as Record<string,string>)?.[productsetType.color] || ""}
             alt={product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"

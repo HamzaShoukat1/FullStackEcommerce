@@ -18,10 +18,12 @@
     "@nestjs/core": "^11.1.17",
     "@nestjs/platform-express": "^11.1.17",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "stripe": "^22.1.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.19.37",
     "ts-node": "^10.9.2",

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Injectable, UnauthorizedException, NotFoundException, ConflictException, Inject } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { prisma, User } from "@repo/auth-db";
+import { prisma, type User } from "@repo/db";
 import * as bcrypt from "bcrypt";
 import { LoginDto, SignupDto, UserResponseDto } from "./dto";
 import {

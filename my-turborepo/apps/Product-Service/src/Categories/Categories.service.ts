@@ -3,8 +3,7 @@ import {
 } from "@nestjs/common";
 import { CreateCategoryDto } from "./dto/index.js";
 import { UpdateCategoryDto } from "./dto/index.js";
-import { prisma } from "@repo/product-db";
-import  { Prisma } from "@repo/product-db";
+import { prisma, type Prisma } from "@repo/db";
 
 @Injectable()
 export class CategoriesService {
