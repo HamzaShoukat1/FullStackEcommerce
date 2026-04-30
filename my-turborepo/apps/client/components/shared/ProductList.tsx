@@ -147,7 +147,7 @@ export default function ProductList({ category, params }: { category: string, pa
             <Categories />
             {params === "products" && <Filter />}
             <div className="grid  gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-                {products.map((product:any) => (
+                {products.map((product) => (
                     <ProductCard key={product.id} product={product} />
 
                 ))}
