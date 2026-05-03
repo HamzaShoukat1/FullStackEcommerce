@@ -39,7 +39,6 @@ export class AuthService {
                 passwordHash,
                 firstName: dto.firstName,
                 lastName: dto.lastName,
-                address: dto.address
             }
         });
         return this.responseWrapperwithTokens(user);
@@ -65,7 +64,7 @@ export class AuthService {
 
 
     async logout(userId: number, refreshToken?: string) {
-        if (!refreshToken) {
+        if (refreshToken) {
 
             await prisma.refreshToken.deleteMany({
                 where: {
@@ -199,9 +198,7 @@ export class AuthService {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            address: user.address,
             role: user.role,
-            isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
         };
     }

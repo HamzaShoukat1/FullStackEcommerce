@@ -11,13 +11,16 @@
     "./cookiesOptions": "./cookiesOptions/index.ts",
     "./product.types": "./product.types.ts",
     "./cart.types": "./Cart.types.ts",
-    "./frontedDtos": "./frontedDtos/index.ts"
+    "./frontedDtos": "./frontedDtos/index.ts",
+    "./interceptors": "./interceptors/response.interceptor.ts",
+    "./ExceptionFilters": "./ExceptionFilters/ExceptionFilter.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/jwt": "^11.0.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "rxjs": "^7.8.2",
     "zod": "4.3.6"
   },
@@ -25,6 +28,7 @@
     "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.37",
     "typescript": "^6.0.2"
   }

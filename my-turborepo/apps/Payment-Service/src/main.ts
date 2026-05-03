@@ -1,15 +1,75 @@
-import "dotenv/config.js"
+import 'dotenv/config';
+import 'reflect-metadata';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+config({ path: resolve(__dirname, '..', '.env') });
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
+import { AppModule } from './app.module';
+// import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
+// import helmet from 'helmet';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from '@repo/shared';
 
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
 
+  try {
+    const app = await NestFactory.create(AppModule);
 
-  const port = Number(process.env.PORT) || 3004;
-  const app = await NestFactory.create(AppModule);
-  await app.listen(port);
-  console.log(`🚀 Payment-Service is running on http://localhost:${port}`);
+    // Security middleware
+    app.useGlobalInterceptors(new ResponseInterceptor());
+    // app.use(helmet());
+    // Allow local dev origins commonly used in this monorepo
+    const allowedOrigins = [
+      'http://localhost:3001',
+    ];
+
+    app.enableCors({
+      origin: allowedOrigins,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      credentials: true,
+    });
+
+    // Global pipes
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+    // Swagger - only enable in non-production environments
+    // if (configService.get('env') !== 'production') {
+    //   const config = new DocumentBuilder()
+    //     .setTitle('Prime Nestjs')
+    //     .setDescription('Boilerplate for nestjs')
+    //     .setVersion('2.0.0')
+    //     .addBearerAuth()
+    //     .addTag('api')
+    //     .build();
+
+    //   const document = SwaggerModule.createDocument(app, config);
+    //   SwaggerModule.setup('api', app, document);
+    // }
+
+    // const port = ('port', 3000);
+    const port = process.env.PORT || 3008;
+    await app.listen(port);
+    logger.log(`Application is running on: http://localhost:${port}`);
+
+  } catch (error) {
+    logger.error('Error during application bootstrap:', error);
+    process.exit(1);
+  }
 }
 
 bootstrap();

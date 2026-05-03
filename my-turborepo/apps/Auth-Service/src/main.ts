@@ -17,7 +17,8 @@ import { AppModule } from './app.module';
 
 // import helmet from 'helmet';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { getAccessTokenSecret, getJwtAccessExpires, ResponseInterceptor } from '@repo/shared';
+import { JwtModule } from '@nestjs/jwt';
 
 
 async function bootstrap() {
@@ -29,6 +30,11 @@ async function bootstrap() {
     // Security middleware
     app.use(cookieParser());
     app.useGlobalInterceptors(new ResponseInterceptor());
+    app.enableCors({
+      origin: ['http://localhost:3001'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      credentials: true,
+    })
     // app.use(helmet());
     const allowedOrigins = ['http://localhost:3003']
     app.enableCors({
@@ -36,6 +42,11 @@ async function bootstrap() {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     });
+    JwtModule.register({
+      global:true,
+      secret:getAccessTokenSecret(),
+      signOptions:{expiresIn:getJwtAccessExpires() as any}
+    })
 
     // Global pipes
     app.useGlobalPipes(

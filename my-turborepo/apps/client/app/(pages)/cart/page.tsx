@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import {  useAppSelector } from "@/app/hooks/usereduxhook";
 import ClientOnly from "@/app/hooks/onlyClient";
+import StripePaymentForm from "@/components/shared/StripePaymentForm";
 
 const steps = [
   {
@@ -128,7 +129,7 @@ const subtotal = useMemo(() =>
             </ClientOnly>
           ) : activeStep === 2 ? (<ShippingAdressForm setShippingform={setShippingform} />) : activeStep === 3 && Shippingform ?
           //  (<PaymentForm />) 
-          "todoo add stripe form here"
+          <StripePaymentForm shippingForm={Shippingform} />
             : <p className="text-sm text-gray-500">please fill in the shipping form to continue</p>}
 
 

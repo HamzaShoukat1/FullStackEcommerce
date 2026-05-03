@@ -6,7 +6,7 @@ export default async function Homepage({ searchParams }: { searchParams: Promise
   return (
     <div>
       <div className="relative aspect-3/1 mb-12">
-        <Image src="/featured.png" alt="featured product" fill />
+        <Image src="/featured.png" loading="eager" alt="featured product" fill />
       </div>
 
       <ProductList category={category} params="homepage" />

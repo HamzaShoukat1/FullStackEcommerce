@@ -1,2 +1,2 @@
-export { IsAuthenticatedGuard, isauthenticatedguard } from './is-authenticated.guard';
+export { IsAuthenticatedGuard } from './is-authenticated.guard';
 export { RolesGuard } from './role.guard';

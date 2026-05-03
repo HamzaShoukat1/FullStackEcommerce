@@ -17,7 +17,7 @@ const getEnvOrThrow = (key: string): string => {
 
 export const getAccessTokenSecret = (): string => getEnvOrThrow('JWT_ACCESS_SECRET');
 export const getRefreshTokenSecret = (): string => getEnvOrThrow('JWT_REFRESH_SECRET');
-export const getJwtAccessExpires = (): string => getEnvOrThrow('JWT_ACCESS_EXPIRES')?.trim() || '15m';
+export const getJwtAccessExpires = (): string => getEnvOrThrow('JWT_ACCESS_EXPIRES')?.trim() || '1h';
 export const getJwtRefreshExpires = (): string => getEnvOrThrow('JWT_REFRESH_EXPIRES')?.trim() || '7d';
 
 // export const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET as string;
@@ -25,29 +25,32 @@ export const getJwtRefreshExpires = (): string => getEnvOrThrow('JWT_REFRESH_EXP
 // export const JWT_ACCESS_EXPIRES = (process.env.JWT_ACCESS_EXPIRES ?? '15m') as any;
 // export const JWT_REFRESH_EXPIRES = (process.env.JWT_REFRESH_EXPIRES ?? '7d') as any;
 
-export const ACCESS_COOKIE_OPTION:CookieOptions = {
+export const ACCESS_COOKIE_OPTION: CookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    secure: false, //true in production
+    sameSite: 'lax', //none inproduction
+    path: '/',
+    maxAge: 1 * 60 * 60 * 1000, // 1 hour (default access token expiry)
 }
-export const REFRESH_COOKIE_OPTION:CookieOptions = {
+export const REFRESH_COOKIE_OPTION: CookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
     sameSite: 'lax',
+    path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 }
 export interface AuthRequest extends Request {
-  user: {
-    sub: number;
-    email: string;
-    role: string;
-    firstName: string;
-    lastName: string;
-    address: string;
+    user: {
+        sub: number;
+        email: string;
+        role: string;
+        firstName: string;
+        lastName: string;
+        address: string;
+
+    };
     cookies?: {
-        accessToken?: string;   
+        accessToken?: string;
         refreshToken?: string;
     }
-  };
 }
