@@ -50,7 +50,7 @@ export type OrderDTO = {
   items: OrderItemDTO[];
 
   total: number;
-  status: 'PENDING' | 'PAID' | 'FAILED';
+  status: 'PAID' | 'FAILED';
   createdAt: string;
 };
 

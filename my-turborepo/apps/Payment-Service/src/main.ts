@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,14 +24,21 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
   try {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule,{
+      rawBody:true,
+      bodyParser:true
+    });
 
     // Security middleware
     app.useGlobalInterceptors(new ResponseInterceptor());
     // app.use(helmet());
-    // Allow local dev origins commonly used in this monorepo
+    // Allow local dev origins and ngrok
     const allowedOrigins = [
       'http://localhost:3001',
+      "http://localhost:3002",
+      "http://localhost:3003",
+      'http://localhost:3000',
+      /^https:\/\/.*\.ngrok\.io$/, // ngrok URLs for webhook testing
     ];
 
     app.enableCors({
@@ -38,15 +46,20 @@ async function bootstrap() {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     });
+    app.use(cookieParser());
+
+ 
 
     // Global pipes
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         transform: true,
-        forbidNonWhitelisted: true,
+        forbidNonWhitelisted: false, // Allow webhook payloads with extra fields
       }),
+
     );
+
     // Swagger - only enable in non-production environments
     // if (configService.get('env') !== 'production') {
     //   const config = new DocumentBuilder()
@@ -73,3 +86,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+

@@ -5,7 +5,6 @@ import "./globals.css";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import ReduxProvider from "./Store/provider";
-import SessionExpiredModal from "@/components/Dialogs/SessionExpiredModal";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -35,7 +34,6 @@ export default function RootLayout({
           <Providers>
             <ReduxProvider>
               <Navbar />
-              <SessionExpiredModal />
               {children}
               <Footer />
             </ReduxProvider>

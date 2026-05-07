@@ -48,10 +48,8 @@ export class UserResponseDto {
     email!: string;
     firstName?: string;
     lastName?: string;
-    address?: string;
     role!: string;
     refreshToken?: string;
-    isEmailVerified!: boolean;
     createdAt!: Date;
 }
 export class AuthResponseDto {

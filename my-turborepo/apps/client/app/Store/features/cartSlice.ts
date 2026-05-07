@@ -52,10 +52,14 @@ const CartSlice = createSlice({
     existing.quantity += quantity;
   } else {
     state.cartItems.push({
-      ...product,
+      id: product.id,
+      productId: String(product.id),
+      name: product.name,
+      price: product.price,
       quantity,
       selectedColor,
       selectedSize,
+      images: product.images,
     });
   }
 

@@ -7,8 +7,6 @@ if (!APIKEY) {
   throw new Error("STRIPE_API_KEY is not defined in environment variables or not load");
 }
 
-const stripe = new Stripe(APIKEY, {
-  apiVersion: '2024-06-20'  as any
-});
+const stripe = new Stripe(APIKEY);
 
 export default stripe;

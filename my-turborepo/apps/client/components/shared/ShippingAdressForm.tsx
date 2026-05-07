@@ -25,7 +25,7 @@ export default function ShippingAdressForm({ setShippingform }: { setShippingfor
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleSubmitShipping)}>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500" htmlFor="name">Name</label>
-        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text" id="name" placeholder="john ed"  {...register("name")} />
+        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text" value={"sasa"} id="name" placeholder="john ed"  {...register("name")} />
         {errors.name && (
           <p className="text-xs text-red-500">{errors.name?.message}</p>
         )}
@@ -33,7 +33,7 @@ export default function ShippingAdressForm({ setShippingform }: { setShippingfor
       </div>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500" htmlFor="email">Email</label>
-        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="email" id="email" placeholder="john@gmail.com"  {...register("email")} />
+        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="email" value={"hamza@gmail.com"} id="email" placeholder="john@gmail.com"  {...register("email")} />
         {errors.email && (
           <p className="text-xs text-red-500">{errors.email?.message}</p>
         )}
@@ -41,7 +41,7 @@ export default function ShippingAdressForm({ setShippingform }: { setShippingfor
       </div>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500" htmlFor="phone">Phone No</label>
-        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text" id="phone" placeholder="+996"  {...register("phone")} />
+        <input className="border-b border-gray-300 py-2 outline-none text-sm" value={"2120121"} type="text" id="phone" placeholder="+996"  {...register("phone")} />
         {errors.phone && (
           <p className="text-xs text-red-500">{errors.phone?.message}</p>
         )}
@@ -50,7 +50,7 @@ export default function ShippingAdressForm({ setShippingform }: { setShippingfor
 
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500" htmlFor="address">Address</label>
-        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text" id="address" placeholder="franciso"  {...register("address")} />
+        <input className="border-b border-gray-300 py-2 outline-none text-sm" value={"sasasa"} type="text" id="address" placeholder="franciso"  {...register("address")} />
         {errors.address && (
           <p className="text-xs text-red-500">{errors.address?.message}</p>
         )}
@@ -58,7 +58,7 @@ export default function ShippingAdressForm({ setShippingform }: { setShippingfor
       </div>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500" htmlFor="city">City</label>
-        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text" id="city" placeholder="branzil"  {...register("city")} />
+        <input className="border-b border-gray-300 py-2 outline-none text-sm" type="text"  value={"sasa"} id="city" placeholder="branzil"  {...register("city")} />
         {errors.city && (
           <p className="text-xs text-red-500">{errors.city?.message}</p>
         )}

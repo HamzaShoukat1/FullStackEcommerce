@@ -14,7 +14,6 @@ enum UserRole {
 }
 
 enum OrderStatus {
-  PENDING
   SUCCESS
   FAILED
 }
@@ -31,9 +30,9 @@ model User {
   isEmailVerified Boolean        @default(false)
   refreshTokens   RefreshToken[]
   orders          Order[]
+  cartItems       CartItem[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  
 }
 
 model RefreshToken {
@@ -72,6 +71,7 @@ model Product {
   orderItems       OrderItem[]
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+  cartItems        CartItem[]
 }
 
 model Order {
@@ -80,11 +80,21 @@ model Order {
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   email           String
   amount          Decimal
-  status          OrderStatus @default(PENDING)
-  products           OrderItem[]
+  status          OrderStatus
+  products        OrderItem[]
   shippingAddress Json
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model CartItem {
+  id        Int    @id @default(autoincrement())
+  userId    Int
+  productId String
+  quantity  Int
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 }
 
 model OrderItem {

@@ -1,7 +1,1 @@
-
-import { triggerSessionExpired } from '@/components/Dialogs/SessionExpiredModal';
-
-export function handleSessionExpired(queryClient: any) {
-  queryClient.clear();
-  triggerSessionExpired();
-}
+// Session handler removed - refresh token logic removed

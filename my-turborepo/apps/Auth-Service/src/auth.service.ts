@@ -131,7 +131,7 @@ export class AuthService {
 
         return {
             tokens,
-            user: this.mapUser(user as UserResponseDto)
+            user: this.mapUser(user as UserResponseDto )
         };
     }
 

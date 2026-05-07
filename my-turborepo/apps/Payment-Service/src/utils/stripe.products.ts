@@ -21,10 +21,10 @@ export const createStripeProduct = async (item: StripeProductTypes): Promise<any
     }
 }
 
-export const getStripeProductPrice = async (productId: number): Promise<any> => {
+export const getStripeProductPrice = async (productId: string): Promise<any> => {
     try {
         const res = await stripe.prices.list({
-            product: "123"
+            product: productId
         })
         return res.data[0]?.unit_amount ?? null
 

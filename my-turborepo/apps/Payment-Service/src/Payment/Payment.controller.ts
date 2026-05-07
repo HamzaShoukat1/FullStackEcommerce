@@ -1,30 +1,65 @@
-// payment.controller.ts
-import { Controller, Post } from '@nestjs/common';
-import { Get } from '@nestjs/common';
-import stripe from '../utils/stripe.service';
-@Controller('payments')
+import "dotenv/config";
+
+import { BadRequestException, Body, Controller, Get, Headers, Inject, Param, Post, RawBody, Req,  Res,  UnauthorizedException, UseGuards } from '@nestjs/common';
+import { PaymentService } from './payment.service';
+import type { AuthRequest } from '@repo/shared';
+import { IsAuthenticatedGuard } from '@repo/shared';
+import { StripeSessionResponseDto } from '../dto';
+
+@Controller('stripe')
 export class PaymentController {
+  constructor(@Inject(PaymentService) private paymentService: PaymentService) { }
 
+  @Post('create-checkout-session')
+  @UseGuards(IsAuthenticatedGuard)
+  async createCheckOutSession(
+    @Req() req: AuthRequest,
+    @Body() body?: { items?: Array<{ name: string; price: number; quantity: number }> }
+  ) {
+    const userId = req.user?.sub;
+    const email = req.user?.email;
 
-    @Post('create-product')
-    async createStripeProduct(): Promise<any> {
-        const res = await stripe.products.create({
-            name: 'test product',
-            default_price_data: {
-                currency: 'usd',
-                unit_amount: 1000,
-            },
-        });
-
-        return res
+    if (!userId || !email) {
+      throw new UnauthorizedException();
     }
 
-    @Get('create-product-price')
-    async stripeProductPrice(): Promise<any> {
-        const res = await stripe.prices.list({
-            product: 'prod_UQmI0Wc3tQInj9',
-        });
+    return this.paymentService.createCheckoutSession({
+      userId,
+      email,
+      items: body?.items,
+    });
+  }
 
-        return res.data;
+  @Get(':session_id')
+  @UseGuards(IsAuthenticatedGuard)
+  async getcurrentSession(@Param('session_id') sessionId: string): Promise<StripeSessionResponseDto> {
+    if (!sessionId) {
+      throw new UnauthorizedException("Session ID is required");
     }
+    return this.paymentService.getcurrentSession(sessionId);
+  }
+
+  @Post('webhook')
+  async handleWebhook(@Headers('stripe-signature') Signature: string, @RawBody() rawBody: Buffer,@Res() res:any) {
+    // const signature = req.headers.get('stripe-signature') as string;
+
+    if (!Signature) {
+      throw new BadRequestException("Missing Stripe signature or webhook secret");
+    }
+    const result = await this.paymentService.processWebhook(rawBody, Signature);
+
+    console.log("Webhook processed successfully:", result);
+    return res.status(200).send('Webhook processed successfully');
+
+
+
+
+
+
+  }
+
+
+
+
+
 }

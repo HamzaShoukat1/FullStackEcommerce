@@ -25,8 +25,7 @@ export default function LogoutDialog() {
     const { mutate: logout, isPending } = useMutation({
         mutationFn: logoutUser,
         onSuccess: async () => {
-            // Clear cache and redirect
-             queryClient.clear();
+            queryClient.invalidateQueries({ queryKey: ["me"] });
             router.push("/");
         },
        
