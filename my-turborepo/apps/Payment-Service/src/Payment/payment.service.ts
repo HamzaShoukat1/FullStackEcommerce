@@ -49,7 +49,7 @@ export class PaymentService { // Fixed: Removed ()
         // Create stripe session
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
-            ui_mode: "embedded_page",
+            // ui_mode: "embedded_page",
             client_reference_id: String(data.userId),
             customer_email: data.email,
             line_items: lineItems,
@@ -62,7 +62,7 @@ export class PaymentService { // Fixed: Removed ()
     };
 
     async getcurrentSession(session_id: string): Promise<StripeSessionResponseDto> {
-        const session = await stripe.checkout.sessions.retrieve(session_id,{
+        const session = await stripe.checkout.sessions.retrieve(session_id, {
             expand: ["line_items"],
         });
         if (!session) {
@@ -74,8 +74,8 @@ export class PaymentService { // Fixed: Removed ()
             status: session?.payment_status || "unknown",
             amount_total: session?.amount_total || 0,
             customer_email: session?.customer_email || "unknown",
-            items:session.line_items?.data.map((item)=> ({
-                name:item.description || "unknown",
+            items: session.line_items?.data.map((item) => ({
+                name: item.description || "unknown",
                 price: item.price?.unit_amount || 0,
                 quantity: item.quantity || 0,
             })) || [],
@@ -86,51 +86,54 @@ export class PaymentService { // Fixed: Removed ()
     };
 
 
-      async processWebhook(rawBody: Buffer, signature: string) {
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    async processWebhook(rawBody: Buffer, signature: string) {
+        const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!endpointSecret) {
-      throw new InternalServerErrorException('STRIPE_WEBHOOK_SECRET not configured');
+        if (!endpointSecret) {
+            throw new InternalServerErrorException('STRIPE_WEBHOOK_SECRET not configured');
+        }
+
+        let event: Stripe.Event;
+
+        try {
+            event = stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
+        } catch (error) {
+            throw new BadRequestException(
+                `Webhook Signature verification failed: ${error instanceof Error ? error.message : String(error)
+                }`
+            );
+        }
+
+        // Handle specific business logic based on event type
+        switch (event.type) {
+            case 'checkout.session.completed':
+                const session = await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+
+                console.log("webhook completed", session)
+
+                console.log('Checkout session completed:', session);
+                break;
+
+            default:
+                console.log('Unhandled event type:', event.type);
+        }
+
+        return { received: true };
     }
 
-    let event: Stripe.Event;
+    private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+        console.log('✅ Processing completed session:', session.id);
 
-    try {
-      event = stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
-    } catch (error) {
-      throw new BadRequestException(`Webhook Signature verification failed:`,error instanceof Error ? error.message : String(error));
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+            limit: 100,
+        });
+
+        // TODO: Create order in database
+        // TODO: Send confirmation email
+        console.log("Line Items retrieved:", lineItems.data.length);
+
+
     }
-
-    // Handle specific business logic based on event type
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session =  await  this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
-
-        console.log("webhook completed",session)
-
-        console.log('Checkout session completed:', session);
-        break;
-
-      default:
-        console.log('Unhandled event type:', event.type);
-    }
-
-    return { received: true };
-  }
-
-  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    console.log('✅ Processing completed session:', session.id);
-
-    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-      limit: 100,
-    });
-
-    // TODO: Create order in database
-    // TODO: Send confirmation email
-    console.log("Line Items retrieved:", lineItems.data.length);
-
-
-  }
 
 
 }

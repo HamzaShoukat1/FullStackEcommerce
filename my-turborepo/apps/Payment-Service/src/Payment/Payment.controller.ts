@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { BadRequestException, Body, Controller, Get, Headers, Inject, Param, Post, RawBody, Req,  Res,  UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, Inject, Param, Post, RawBody, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import type { AuthRequest } from '@repo/shared';
 import { IsAuthenticatedGuard } from '@repo/shared';
@@ -30,17 +30,8 @@ export class PaymentController {
     });
   }
 
-  @Get(':session_id')
-  @UseGuards(IsAuthenticatedGuard)
-  async getcurrentSession(@Param('session_id') sessionId: string): Promise<StripeSessionResponseDto> {
-    if (!sessionId) {
-      throw new UnauthorizedException("Session ID is required");
-    }
-    return this.paymentService.getcurrentSession(sessionId);
-  }
-
   @Post('webhook')
-  async handleWebhook(@Headers('stripe-signature') Signature: string, @RawBody() rawBody: Buffer,@Res() res:any) {
+  async handleWebhook(@Headers('stripe-signature') Signature: string, @RawBody() rawBody: Buffer, @Res() res: any) {
     // const signature = req.headers.get('stripe-signature') as string;
 
     if (!Signature) {
@@ -57,6 +48,16 @@ export class PaymentController {
 
 
   }
+  @Get(':session_id')
+  @UseGuards(IsAuthenticatedGuard)
+  async getcurrentSession(@Param('session_id') sessionId: string): Promise<StripeSessionResponseDto> {
+    if (!sessionId) {
+      throw new UnauthorizedException("Session ID is required");
+    }
+    return this.paymentService.getcurrentSession(sessionId);
+  }
+
+
 
 
 

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import cookieparser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,8 +30,9 @@ async function bootstrap() {
     // Security middleware
     app.useGlobalInterceptors(new ResponseInterceptor());
     // app.use(helmet());
+    app.use(cookieparser());
 
-    const allowedOrigins = ['http://localhost:3000']
+    const allowedOrigins = ['http://localhost:3001']
     app.enableCors({
       origin: allowedOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],

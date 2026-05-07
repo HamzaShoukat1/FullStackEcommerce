@@ -11,8 +11,8 @@ import { addToCart } from "@/app/Store/features/cartSlice";
 export default function ProductCard({ product }: { product: ProductDTO }) {
   const dispatch = useAppDispatch()
   const [productsetType, setproductsetType] = useState({
-    size: product.sizes[0]!,
-    color: product.colors[0]!
+    size: product.sizes[0] ?? "",
+    color: product.colors[0] ?? ""
   })
   console.log(productsetType)
   type producttype = {
@@ -36,19 +36,28 @@ const handelAddtoCart = ()=> {
   }))
 
 }
+    const imageSrc = (product.images as Record<string, string>)?.[productsetType.color.toLowerCase()] ;
 
 
   return (
+    
     <div className="shadow-lg rounded-lg overflow-hidden bg-white">
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative w-full aspect-2/3">
-          <Image
+        {imageSrc ? (
+                <Image
             src={(product.images as Record<string,string>)?.[productsetType.color] || ""}
             alt={product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
           />
+        ): (
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+      No Image
+    </div>
+        )}
+    
         </div>
       </Link>
 
@@ -95,7 +104,7 @@ const handelAddtoCart = ()=> {
 
         {/* Price & Cart Button */}
         <div className="flex items-center gap-2 justify-between mt-2">
-          <p className="font-medium">${product.price.toFixed(2)}</p>
+          <p className="font-medium">${Number(product.price).toFixed(2)}</p>
           <button onClick={handelAddtoCart} className="flex items-center gap-2 bg-white text-black shadow-md text-xs rounded-md px-3 py-1  cursor-pointer hover:bg-black hover:text-white hover:ring-1 hover:ring-gray-400 transition-all duration-300">
             <ShoppingCart className="w-4 h-4" />
             Add to Cart

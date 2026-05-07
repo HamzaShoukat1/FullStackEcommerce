@@ -10,7 +10,7 @@ export default function Filter() {
  
       const filterChange = useCallback(
         (value: string) => {
-          const params = new URLSearchParams(searchParams);
+          const params = new URLSearchParams(searchParams.toString())
           params.set("sort", value || "newest");
           router.push(`${pathname}?${params.toString()}`, { scroll: false });
         },

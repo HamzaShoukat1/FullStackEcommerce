@@ -7,39 +7,47 @@ import { UpdateProductDto } from "./dto/index.js";
 import { prisma, Prisma } from "@repo/db";
 @Injectable()
 export class ProductsService {
+  
   async getAll(query: any) {
-    const { sort, category, search, limit } = query
+    const { sort, category, search, limit } = query;
+
 
     const orderBy = (() => {
       switch (sort) {
         case "asc":
-          return { price: Prisma.SortOrder.asc }
+          return { price: Prisma.SortOrder.asc };
         case "desc":
-          return { price: Prisma.SortOrder.desc }
+          return { price: Prisma.SortOrder.desc };
         case "oldest":
-          return { createdAt: Prisma.SortOrder.asc }
-
+          return { createdAt: Prisma.SortOrder.asc };
+        case "newest":
         default:
-          return { createdAt: Prisma.SortOrder.desc }
+          return { createdAt: Prisma.SortOrder.desc };
       }
-    })()
+    })();
+
+    const where: Prisma.ProductWhereInput = {};
+
+
+    if (category && category !== "all") {
+      where.categorySlug = category
+    }
+
+    if (search) {
+      where.name = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+    console.log("QUERY:", query);
+    console.log("WHERE:", where);
 
     const allProducts = await prisma.product.findMany({
-      where: {
-        category: {
-          slug: category as string
-        },
-        name: {
-          contains: search as string,
-          mode: "insensitive"
-        }
-      },
+      where,
       orderBy,
-      take:limit ? Number(limit) : undefined
+      take: limit ? Number(limit) : undefined,
     });
-    if (!allProducts) {
-      throw new NotFoundException("No products found");
-    }
+
     return allProducts;
   }
 
@@ -88,28 +96,28 @@ export class ProductsService {
       throw new NotFoundException("Category not found");
     }
   }
-async update(id: string, data: UpdateProductDto) {
-  const updateData: Prisma.ProductUpdateInput = {
-    ...(data.name !== undefined && { name: data.name }),
-    ...(data.shortDescription !== undefined && { shortDescription: data.shortDescription }),
-    ...(data.description !== undefined && { description: data.description }),
-    ...(data.price !== undefined && { price: Number(data.price) }),
-    ...(data.sizes !== undefined && { sizes: data.sizes }),
-    ...(data.colors !== undefined && { colors: data.colors }),
-    ...(data.images !== undefined && { images: data.images }),
+  async update(id: string, data: UpdateProductDto) {
+    const updateData: Prisma.ProductUpdateInput = {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.shortDescription !== undefined && { shortDescription: data.shortDescription }),
+      ...(data.description !== undefined && { description: data.description }),
+      ...(data.price !== undefined && { price: Number(data.price) }),
+      ...(data.sizes !== undefined && { sizes: data.sizes }),
+      ...(data.colors !== undefined && { colors: data.colors }),
+      ...(data.images !== undefined && { images: data.images }),
 
-    ...(data.categorySlug !== undefined && {
-      category: {
-        connect: { slug: data.categorySlug }
-      }
-    })
-  };
+      ...(data.categorySlug !== undefined && {
+        category: {
+          connect: { slug: data.categorySlug }
+        }
+      })
+    };
 
-  return prisma.product.update({
-    where: { id },
-    data: updateData
-  });
-}
+    return prisma.product.update({
+      where: { id },
+      data: updateData
+    });
+  }
 
 
   async delete(id: string) {
@@ -117,5 +125,6 @@ async update(id: string, data: UpdateProductDto) {
       where: { id },
     });
 
-    return deleteProduct}
+    return deleteProduct
+  }
 }

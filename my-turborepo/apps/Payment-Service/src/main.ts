@@ -29,6 +29,9 @@ async function bootstrap() {
       bodyParser:true
     });
 
+
+
+
     // Security middleware
     app.useGlobalInterceptors(new ResponseInterceptor());
     // app.use(helmet());

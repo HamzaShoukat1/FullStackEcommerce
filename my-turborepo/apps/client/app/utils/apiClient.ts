@@ -9,7 +9,6 @@ export async function apiClient(url: string, options?: RequestInit) {
   });
 
   const data = await response.json().catch(() => null);
-  console.log("API Response Data:", data);
 
   if (!response.ok) {
     throw new Error(data?.message || "Something went wrong");
