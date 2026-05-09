@@ -10,10 +10,12 @@ export async function apiClient(url: string, options?: RequestInit) {
 
   const data = await response.json().catch(() => null);
 
+  console.log("response data", data.data)
+
   if (!response.ok) {
     throw new Error(data?.message || "Something went wrong");
   }
-  console.log("data rpdocut", response)
+  console.log("reposne", response)
 
-  return data;
+  return data
 }

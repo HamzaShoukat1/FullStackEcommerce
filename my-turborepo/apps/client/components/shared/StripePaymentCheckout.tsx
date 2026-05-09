@@ -1,16 +1,25 @@
 "use client";
-import "dotenv/config"
+
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useEffect, useState } from "react";
-import { shippingformInputs } from "@repo/shared";
 import { useMutation } from "@tanstack/react-query";
+
 import useCurrentUser from "@/app/hooks/usecurrentUser";
 import { createpaymentSession } from "@/services/payment.service";
+
+import type { shippingformInputs } from "@repo/shared";
+
 const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY ||
-    "pk_test_51TRrrWBabLRZsefiIvpPVUiNMVpXTKCnRtFNShecQZG7uHnExNRt68tnYNRnsk2zFKYJpsDySls1u6F8oiuIanwx00o9zH5Qgo"
+    process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY! || "pk_test_51TRrrWBabLRZsefiIvpPVUiNMVpXTKCnRtFNShecQZG7uHnExNRt68tnYNRnsk2zFKYJpsDySls1u6F8oiuIanwx00o9zH5Qgo"
 );
+
+type CartItem = {
+    id: number;
+    name: string;
+    price: number | string;
+    quantity: number;
+};
 
 export default function StripeCheckoutForm({
     shippingForm,
@@ -19,86 +28,142 @@ export default function StripeCheckoutForm({
 }) {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
 
+    const initializedRef = useRef(false);
+
     const { user, loading } = useCurrentUser();
 
-    // ✅ use mutateAsync instead of mutate
-    const { mutateAsync, isPending, error } = useMutation({
+    const {
+        mutateAsync: createSession,
+        isPending,
+        error,
+    } = useMutation({
         mutationFn: createpaymentSession,
     });
 
+    /**
+     * Memoized cart retrieval
+     */
+    const cartItems = useMemo<CartItem[]>(() => {
+        try {
+            const cartData = localStorage.getItem("cart");
+
+            if (!cartData) return [];
+
+            const parsed = JSON.parse(cartData);
+
+            return Array.isArray(parsed)
+                ? parsed
+                : parsed.cartItems || [];
+        } catch (error) {
+            console.error("Cart parse error:", error);
+            return [];
+        }
+    }, []);
+
     useEffect(() => {
+        /**
+         * Prevent:
+         * - multiple Stripe sessions
+         * - rerender loops
+         * - abandoned sessions
+         */
+        if (initializedRef.current) return;
+
         const initializeCheckout = async () => {
             try {
                 if (loading || !user) return;
 
-                const cartState = retrieveCart();
-
-                if (!cartState.length) {
-                    throw new Error("Your cart is empty");
+                if (!cartItems.length) {
+                    throw new Error("Cart is empty");
                 }
 
-                const items = cartState.map((item: any) => ({
+                initializedRef.current = true;
+
+                const items = cartItems.map((item) => ({
+                    productId: item.id,
                     name: item.name,
-                    price: item.price,
+                    price: Number(item.price),
                     quantity: item.quantity,
                 }));
 
-                // ✅ correct async call
-                const response = await mutateAsync({items});
+                console.log("🛒 Creating Stripe session:", items);
 
-                if (!response?.data.client_secret) {
-                    throw new Error("Failed to create checkout session");
+                const response = await createSession({ items });
+
+                const secret = response?.data?.client_secret;
+
+                if (!secret) {
+                    throw new Error("Stripe client secret missing");
                 }
 
-                setClientSecret(response.data.client_secret);
-            } catch (err) {
-                console.error("Checkout initialization error:", err);
+                console.log("✅ Stripe session initialized");
+
+                setClientSecret(secret);
+            } catch (error) {
+                initializedRef.current = false;
+
+                console.error(
+                    "❌ Checkout initialization failed:",
+                    error
+                );
             }
         };
 
         initializeCheckout();
-    }, [user, loading, shippingForm]); // ✅ fixed deps
+    }, [loading, user, cartItems, createSession]);
 
-    // Helper
-    const retrieveCart = (): any[] => {
-        try {
-            const cartData = localStorage.getItem("cart");
-            if (!cartData) return [];
-
-            const parsed = JSON.parse(cartData);
-            return Array.isArray(parsed) ? parsed : parsed.cartItems || [];
-        } catch {
-            return [];
-        }
-    };
-
-    // UI States
-    if (loading) return <div className="p-4">Loading user...</div>;
-
-    if (!user)
-        return <div className="p-4 text-red-600">Please sign in to checkout</div>;
-
-    if (isPending)
-        return <div className="p-4">Preparing checkout...</div>;
-
-    if (error)
+    /**
+     * Loading States
+     */
+    if (loading) {
         return (
-            <div className="p-4 text-red-600">
-                {error instanceof Error ? error.message : "Something went wrong"}
+            <div className="p-4">
+                Loading user...
             </div>
         );
+    }
+
+    if (!user) {
+        return (
+            <div className="p-4 text-red-500">
+                Please sign in to continue checkout
+            </div>
+        );
+    }
+
+    if (isPending && !clientSecret) {
+        return (
+            <div className="p-4">
+                Preparing secure checkout...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-4 text-red-500">
+                {error instanceof Error
+                    ? error.message
+                    : "Checkout failed"}
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
             {clientSecret ? (
                 <EmbeddedCheckoutProvider
                     stripe={stripePromise}
-                    options={{ clientSecret }}
+                    options={{
+                        clientSecret,
+                    }}
                 >
                     <EmbeddedCheckout />
                 </EmbeddedCheckoutProvider>
             ) : (
-                <div className="p-4">Initializing checkout...</div>
+                <div className="p-4">
+                    Initializing payment...
+                </div>
             )}
         </div>
     );

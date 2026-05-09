@@ -23,11 +23,14 @@ export class PaymentController {
       throw new UnauthorizedException();
     }
 
-    return this.paymentService.createCheckoutSession({
+    const result = await  this.paymentService.createCheckoutSession({
       userId,
       email,
       items: body?.items,
+
     });
+    console.log("Checkout session created:", result);
+    return result;
   }
 
   @Post('webhook')

@@ -10,7 +10,7 @@ import { getAccessTokenSecret, getJwtAccessExpires, IsAuthenticatedGuard} from "
             signOptions: { expiresIn: getJwtAccessExpires() as any },
         })
     ],
-    controllers: [PaymentController],
+    controllers: [PaymentController,],
     providers: [PaymentService,IsAuthenticatedGuard,]
     
 })
