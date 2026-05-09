@@ -11,7 +11,7 @@ const ProductInteraction = ({
   selectedSize,
   selectedColor,
 }: {
-  product: ProductDTO;
+  product: any;
   selectedSize: string;
   selectedColor: string;
 }) => {
@@ -19,7 +19,12 @@ const ProductInteraction = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-    const cartCount = useAppSelector((state) => state.cart.totalQuantity);
+  const currentItem = useAppSelector((state)=> state.cart.cartItems.find((i)=> 
+  i.id === product.data.id &&
+  i.selectedColor === selectedColor &&
+  i.selectedSize === selectedSize
+  ))
+  const cartCount = currentItem ? currentItem.quantity : 0
   
 
 
@@ -54,7 +59,7 @@ const ProductInteraction = ({
       <div className="flex flex-col gap-2 text-xs">
         <span className="text-gray-500">Size</span>
         <div className="flex items-center gap-2">
-          {product.sizes.map((size) => (
+          {product.data.sizes.map((size:any) => (
             <div
               className={`cursor-pointer border p-2px ${
                 selectedSize === size ? "border-gray-600" : "border-gray-300"
@@ -79,7 +84,7 @@ const ProductInteraction = ({
       <div className="flex flex-col gap-2 text-sm">
         <span className="text-gray-500">Color</span>
         <div className="flex items-center gap-2">
-          {product.colors.map((color) => (
+          {product.data.colors.map((color:any) => (
             <div
               className={`cursor-pointer border p-2px ${
                 selectedColor === color ? "border-gray-300" : "border-white"
@@ -98,15 +103,23 @@ const ProductInteraction = ({
         <div className="flex items-center gap-2">
           <button
             className="cursor-pointer border border-gray-300 p-1"
-            onClick={()=>dispatch(decreaseQty(product.id))}
+            onClick={()=>dispatch(decreaseQty({
+              id: product.data.id,
+              selectedColor,
+              selectedSize
+            }))}
           >
             <Minus className="w-4 h-4" />
           </button>
           <span>{cartCount}</span>
           <button
             className="cursor-pointer border border-gray-300 p-1"
-                  onClick={()=>dispatch(increaseQty(product.id))}
-          >
+                  onClick={()=>dispatch(increaseQty({
+                    id: product.data.id,
+                    selectedColor,
+                    selectedSize
+                  }))}
+                  >
             <Plus className="w-4 h-4" />
           </button>
         </div>

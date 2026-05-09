@@ -27,4 +27,10 @@ export async function getProducts({ category, sort, search, params }: { category
     return apiClient(`${backendUrl}/products?${query.toString()}`, {
         method: "GET",
     });
+};
+
+export async function getProductById(id: string) {
+    return apiClient(`${backendUrl}/products/${id}`, {
+        method: "GET",
+    });
 }

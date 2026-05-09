@@ -86,13 +86,13 @@ const steps = [
 
 
 export default function page() {
-  const cartItems = useAppSelector(state => state.cart.cartItems)
+  const {cartItems,totalAmount} = useAppSelector(state => state.cart)
   const [Shippingform, setShippingform] = useState<shippingformInputs | null>(null)
-  const subtotal = useMemo(() =>
-    cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-    , [cartItems]);
+  // const subtotal = useMemo(() =>
+  //   cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  //   , [cartItems]);
 
-  const total = subtotal
+  // const total = subtotal
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -139,13 +139,13 @@ export default function page() {
 
             <div className="flex flex-col gap-4">
               <div className="flex justify-between">
-                <p className="text-sm text-gray-500">SubTotal</p>
-                <p className="text-sm font-medium">${subtotal.toFixed(2)}</p>
+                {/* <p className="text-sm text-gray-500">SubTotal</p>
+                <p className="text-sm font-medium">${totalAmount}</p> */}
               </div>
               <hr className="border-gray-300" />
               <div className="flex justify-between">
                 <p className="text-sm text-gray-800 font-semibold">Total</p>
-                <p className="text-sm  text-gray-900 font-semibold">${total.toFixed(2)}</p>
+                <p className="text-sm  text-gray-900 font-semibold">${  totalAmount}</p>
               </div>
             </div>
 

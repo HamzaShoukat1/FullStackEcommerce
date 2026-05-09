@@ -7,7 +7,8 @@ import { removeFromCart } from "@/app/Store/features/cartSlice"
 import Image from "next/image"
 export default function ShoppingForm() {
   const dispatch = useAppDispatch()
-  const cartItems = useAppSelector(state => state.cart.cartItems)
+  const { cartItems, totalAmount } = useAppSelector(state => state.cart)
+
 
   return (
     <div>
@@ -35,7 +36,7 @@ export default function ShoppingForm() {
                   <p className="text-xs text-gray-500">Size:{" "}{item.selectedSize}</p>
                   <p className="text-xs text-gray-500">Color:{" "}{item.selectedColor}</p>
                 </div>
-                <p className="font-medium mt-2" >${item.price?.toFixed(2)}</p>
+                <p className="font-medium mt-2" >${(item.price * item.quantity).toFixed(2)}</p>
               </div>
 
 

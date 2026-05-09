@@ -39,11 +39,12 @@ const CartSlice = createSlice({
   const { product, quantity, selectedColor, selectedSize } = action.payload;
 
   // 🛡️ safety check
-  if (!product) return;
+  if (!product || !product.data) return;
+  const productId = product.data.id
 
   const existing = state.cartItems.find(
     (i) =>
-      i.id === product.id &&
+      i.id === productId &&
       i.selectedColor === selectedColor &&
       i.selectedSize === selectedSize
   );
@@ -52,14 +53,15 @@ const CartSlice = createSlice({
     existing.quantity += quantity;
   } else {
     state.cartItems.push({
-      id: product.id,
-      productId: String(product.id),
-      name: product.name,
-      price: product.price,
+      id: productId,
+      productId: String(productId),
+
+      name: product.data.name,
+      price: product.data.price,
       quantity,
       selectedColor,
       selectedSize,
-      images: product.images,
+      images: product.data.images,
     });
   }
 
@@ -86,17 +88,28 @@ const CartSlice = createSlice({
       state.totalAmount = 0;
       state.totalQuantity = 0;
     },
-    increaseQty: (state, action) => {
-      const item = state.cartItems.find(i => i.id === action.payload);
-      if (item) item.quantity++;
-      calculateTotals(state as any);
-    },
+ increaseQty: (state, action) => {
+  const { id, selectedColor, selectedSize } = action.payload;
+  const item = state.cartItems.find(i => 
+    i.id === id && 
+    i.selectedColor === selectedColor && 
+    i.selectedSize === selectedSize
+  );
+  if (item) item.quantity++;
+  calculateTotals(state as any);
+},
 
-    decreaseQty: (state, action) => {
-      const item = state.cartItems.find(i => i.id === action.payload);
-      if (item && item.quantity > 1) item.quantity--;
-      calculateTotals(state as any);
-    },
+decreaseQty: (state, action) => {
+  const { id, selectedColor, selectedSize } = action.payload;
+  const item = state.cartItems.find(i => 
+    i.id === id && 
+    i.selectedColor === selectedColor && 
+    i.selectedSize === selectedSize
+  );
+  if (item && item.quantity > 1) item.quantity--;
+  calculateTotals(state as any);
+},
+
   },
 });
 

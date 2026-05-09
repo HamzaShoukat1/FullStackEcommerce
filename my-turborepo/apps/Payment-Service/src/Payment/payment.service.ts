@@ -49,7 +49,7 @@ export class PaymentService { // Fixed: Removed ()
         // Create stripe session
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
-            // ui_mode: "embedded_page",
+            ui_mode: "embedded_page",
             client_reference_id: String(data.userId),
             customer_email: data.email,
             line_items: lineItems,

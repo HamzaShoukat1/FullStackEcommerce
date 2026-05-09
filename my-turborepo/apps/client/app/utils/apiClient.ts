@@ -13,6 +13,7 @@ export async function apiClient(url: string, options?: RequestInit) {
   if (!response.ok) {
     throw new Error(data?.message || "Something went wrong");
   }
+  console.log("data rpdocut", response)
 
   return data;
 }
