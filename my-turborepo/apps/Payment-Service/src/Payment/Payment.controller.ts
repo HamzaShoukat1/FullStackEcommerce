@@ -23,7 +23,7 @@ export class PaymentController {
       throw new UnauthorizedException();
     }
 
-    const result = await  this.paymentService.createCheckoutSession({
+    const result = await this.paymentService.createCheckoutSession({
       userId,
       email,
       items: body?.items,
@@ -34,22 +34,18 @@ export class PaymentController {
   }
 
   @Post('webhook')
-  async handleWebhook(@Headers('stripe-signature') Signature: string, @RawBody() rawBody: Buffer, @Res() res: any) {
-    // const signature = req.headers.get('stripe-signature') as string;
+  async handleWebhook(@Headers('stripe-signature') Signature: string, @Req() req: any, @Res() res: any) {
+      console.log('RAW BODY =>', req.rawBody);
 
+  if (!req.rawBody) {
+    throw new BadRequestException('Raw body missing');
+  }
     if (!Signature) {
       throw new BadRequestException("Missing Stripe signature or webhook secret");
-    }
+    };
+    const rawBody = req.rawBody;
     const result = await this.paymentService.processWebhook(rawBody, Signature);
-
-    console.log("Webhook processed successfully:", result);
-    return res.status(200).send('Webhook processed successfully');
-
-
-
-
-
-
+    return res.status(200).json(result);
   }
   @Get(':session_id')
   @UseGuards(IsAuthenticatedGuard)

@@ -99,6 +99,9 @@ export class PaymentService {
         if (!endpointSecret) {
             throw new InternalServerErrorException('STRIPE_WEBHOOK_SECRET not configured');
         }
+        console.log("RAW BODY TYPE:", typeof rawBody);
+        console.log("RAW BODY LENGTH:", rawBody?.length);
+        console.log("SIGNATURE:", signature);
 
         let event: Stripe.Event;
 
@@ -116,13 +119,13 @@ export class PaymentService {
             case 'checkout.session.completed':
                 const session = await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
 
-                console.log("webhook completed", session)
+                Logger.log("webhook completed", session)
 
-                console.log('Checkout session completed:', session);
+                Logger.log('Checkout session completed:', session);
                 break;
 
             default:
-                console.log('Unhandled event type:', event.type);
+                Logger.log('Unhandled event type:', event.type);
         }
 
         return { received: true };
@@ -131,47 +134,61 @@ export class PaymentService {
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
         console.log('✅ Processing completed session:', session.id);
 
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-            limit: 100,
-        });
-
-        const userId = parseInt(session.metadata?.userId as string)
+        // Validate and extract metadata
+        const userId = parseInt(session.metadata?.userId as string);
+        if (!userId || isNaN(userId)) {
+            Logger.error('Missing or invalid userId in session metadata:', session.metadata);
+            throw new Error('Missing or invalid userId in session metadata');
+        }
         const amount = session.amount_total ? session.amount_total / 100 : 0; // Convert from cents to dollars
+        let metaDataItems: any[] = [];
+        try {
+            metaDataItems = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
+            if (!Array.isArray(metaDataItems) || metaDataItems.length === 0) {
+                Logger.error('No items found in session metadata:', session.metadata);
+                throw new Error('No items found in session metadata');
+            }
+        } catch (err) {
+            Logger.error('Failed to parse items from session metadata:', err, session.metadata);
+            throw new Error('Failed to parse items from session metadata');
+        }
 
-        const metaDataItems = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
+        // Validate each item
+        for (const item of metaDataItems) {
+            if (!item.productId || !item.quantity) {
+                Logger.error('Invalid item in metadata:', item);
+                throw new Error('Invalid item in metadata');
+            }
+        }
 
         try {
             const order = await prisma.order.create({
                 data: {
                     userId: userId,
-                    email: session.customer_details?.email || "unknown",
+                    email: session.customer_details?.email || session.customer_email || "unknown",
                     amount: amount,
                     status: "SUCCESS",
-                    shippingAddress: session.shipping_address_collection as any,
+                    shippingAddress: session.customer_details?.address
+                        || {},
                     products: {
                         create: metaDataItems.map((item: any) => ({
                             productId: item.productId,
                             quantity: item.quantity || 1,
-                            price: (item.amount_total / 100),
+                            price: typeof item.price === 'number' ? item.price : 0,
                         })),
-                    }
+                    },
+                },
+            });
 
+            Logger.log('✅ Order saved to DB:', order.id);
 
-                }
-            })
+            // Optionally clear cart items after order
+            // await prisma.cartItem.deleteMany({ where: { userId } });
 
-            console.log('✅ Order saved to DB:', order.id);
-
-            await prisma.cartItem.deleteMany({
-                where: {
-                    userId
-                }
-            })
-
+            return order;
         } catch (error) {
-            console.error('❌ Database error saving order:', error);
-
-
+            Logger.error('❌ Database error saving order:', error);
+            throw error;
         }
 
 

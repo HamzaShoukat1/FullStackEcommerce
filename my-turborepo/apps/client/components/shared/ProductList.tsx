@@ -7,6 +7,7 @@ import Filter from "./Filter";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/services/product.service";
 import { useSearchParams } from "next/navigation";
+import ClientOnly from "@/app/hooks/onlyClient";
 
 // TEMPORARY
 // const products: ProductDTO[] = [(
@@ -155,35 +156,40 @@ export default function ProductList({ params }: { params?: "homepage" | "product
 
 
 
-    const { data: productsData, isLoading, isError } = useQuery({
+    const { data: productsData, isLoading, isError, isFetching } = useQuery({
         queryKey: ["products", category, params, sort, search],
         queryFn: () => getProducts({ category, params, sort, search }),
-        staleTime: 1000 * 60 * 5, // 5 minutes
     })
     console.log("SORT SENT:", sort);
 
 
     return (
-        <div className="w-full">
-            <Categories />
-            {params === "products" && <Filter />}
-            <div className="grid  gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-                {productsData?.data.map((product: ProductDTO) => (
-                    <ProductCard key={product.id} product={product} />
+        <ClientOnly>
+            <div className="w-full">
 
-                ))}
+                <Categories />
+                {params === "products" && <Filter />}
+                <div className="grid  gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
 
-                {isLoading && <p>Loading...</p>}
-                {isError && <p>Error loading products.</p>}
+
+                    {productsData?.data.map((product: ProductDTO) => (
+
+                        <ProductCard key={product.id} product={product} />
+
+                    ))}
+
+
+                    {isError && <p>Error loading products.</p>}
+                </div>
+
+
+                <Link
+                    href={category ? `/products?category=${category}` : "/products"}
+                    className="flex justify-end mt-4 underline text-gray-500 text-sm"
+                >
+                    View all Products
+                </Link>
             </div>
-
-
-            <Link
-                href={category ? `/products?category=${category}` : "/products"}
-                className="flex justify-end mt-4 underline text-gray-500 text-sm"
-            >
-                View all Products
-            </Link>
-        </div>
+        </ClientOnly>
     )
 }

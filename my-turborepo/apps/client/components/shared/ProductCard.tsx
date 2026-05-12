@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useAppDispatch } from "@/app/hooks/usereduxhook";
+import ClientOnly from "@/app/hooks/onlyClient";
 import { addToCart } from "@/app/Store/features/cartSlice";
 
 export default function ProductCard({ product }: { product: ProductDTO }) {
@@ -40,7 +41,8 @@ const handelAddtoCart = ()=> {
 
   return (
     
-    <div className="shadow-lg rounded-lg overflow-hidden bg-white">
+  <ClientOnly>
+      <div className="shadow-lg rounded-lg overflow-hidden bg-white">
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative w-full aspect-2/3">
@@ -112,5 +114,6 @@ const handelAddtoCart = ()=> {
         </div>
       </div>
     </div>
+  </ClientOnly>
   );
 }

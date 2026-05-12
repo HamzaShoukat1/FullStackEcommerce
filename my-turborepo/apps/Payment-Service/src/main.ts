@@ -25,8 +25,7 @@ async function bootstrap() {
 
   try {
     const app = await NestFactory.create(AppModule,{
-      rawBody:true,
-      bodyParser:true
+      rawBody:true
     });
 
 
@@ -34,6 +33,10 @@ async function bootstrap() {
 
     // Security middleware
     app.useGlobalInterceptors(new ResponseInterceptor());
+
+    // Use raw body parser for Stripe webhook route, JSON parser for others
+    // app.use('/stripe/webhook', raw({ type: '*/*' }));
+    // app.use(json());
     // app.use(helmet());
     // Allow local dev origins and ngrok
     const allowedOrigins = [
@@ -51,7 +54,7 @@ async function bootstrap() {
     });
     app.use(cookieParser());
 
- 
+
 
     // Global pipes
     app.useGlobalPipes(
