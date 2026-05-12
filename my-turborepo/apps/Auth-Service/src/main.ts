@@ -31,7 +31,7 @@ async function bootstrap() {
     app.use(cookieParser());
     app.useGlobalInterceptors(new ResponseInterceptor());
     app.enableCors({
-      origin: ['http://localhost:3001'],
+      origin: ['http://localhost:3001','http://localhost:3010'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     })

@@ -1,5 +1,5 @@
 import {columns } from "./columns";
-import { DataTable } from "@/app/payments/data-table";
+import { DataTable } from "@/app/(dashboard)/payments/data-table";
 import { User } from "@/app/Validations";
 const getData = async (): Promise<User[]> => {
   return [

@@ -1,5 +1,5 @@
 import {  columns } from "./columns";
-import { Product } from "../Validations";
+import { Product } from "../../Validations";
 import { DataTable } from "./data-table";
 
 const getData = async (): Promise<Product[]> => {

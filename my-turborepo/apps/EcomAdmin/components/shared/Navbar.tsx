@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Moon, Settings, Sun, User } from 'lucide-react'
+import { Loader2, LogOut, Moon, Settings, Sun, User } from 'lucide-react'
 import Link from 'next/link'
 import { AvatarFallback, AvatarImage, Avatar } from '../ui/avatar'
 import {
@@ -15,9 +15,31 @@ import {
 import { Button } from '../ui/button';
 import { useTheme } from 'next-themes';
 import { SidebarTrigger } from '../ui/sidebar';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/dist/client/components/navigation';
+import { logoutUser } from '@/services/user.service';
 
 export default function Navbar() {
-  const {  setTheme } = useTheme()
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const { mutate: logout, isPending } = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      queryClient.clear()
+      router.push("/sign-in")
+      router.refresh()
+    },
+    onError: (error) => {
+      console.error("Logout failed:", error);
+    }
+  })
+
+  const handlelogout = () => {
+    logout()
+
+  }
+  const { setTheme } = useTheme()
   return (
     <nav className=' w-full flex items-center justify-between p-4 sticky top-0 bg-background z-10'>
       {/* //left side */}
@@ -36,14 +58,14 @@ export default function Navbar() {
               <span className="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent  align="end">
+          <DropdownMenuContent align="end">
             <DropdownMenuItem className='cursor-pointer' onClick={() => setTheme("light")}>
               Light
             </DropdownMenuItem>
             <DropdownMenuItem className='cursor-pointer' onClick={() => setTheme("dark")}>
               Dark
             </DropdownMenuItem>
-            <DropdownMenuItem  className='cursor-pointer' onClick={() => setTheme("system")}>
+            <DropdownMenuItem className='cursor-pointer' onClick={() => setTheme("system")}>
               System
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -52,8 +74,8 @@ export default function Navbar() {
         {/* //usermenu  */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar>
-              <AvatarImage src="https://avatars.githubusercontent.com/u/1486366" />
+            <Avatar className='cursor-pointer'>
+              <AvatarImage className='cursor-pointer' src="https://avatars.githubusercontent.com/u/1486366" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -66,7 +88,11 @@ export default function Navbar() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem  className="cursor-pointer" variant='destructive'><LogOut className='h-[1.2rem] w-[1.2rem] mr-2 font-light' />Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handlelogout} className="cursor-pointer" variant='destructive'>
+
+
+                {isPending ? 'Logging out...' : 'Logout'}
+              </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
