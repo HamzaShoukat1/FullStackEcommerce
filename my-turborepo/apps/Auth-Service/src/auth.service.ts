@@ -77,6 +77,8 @@ export class AuthService {
         return { message: 'Logged out successfully' };
     };
 
+  
+
     async refreshTokens(refreshToken: string) {
         let payload: TokenPayload;
 
@@ -131,7 +133,7 @@ export class AuthService {
 
         return {
             tokens,
-            user: this.mapUser(user as UserResponseDto )
+            user: this.mapUser(user as UserResponseDto)
         };
     }
 

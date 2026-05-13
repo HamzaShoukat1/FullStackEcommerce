@@ -63,11 +63,12 @@ export class ProductsService {
 
   async create(data: CreateProductDto) {
 
+    const formattedPrice = Number(Number(data.price).toFixed(2));
     const createData: Prisma.ProductCreateInput = {
       name: data.name,
       shortDescription: data.shortDescription || "",
       description: data.description || "",
-      price: Number(data.price),
+      price: formattedPrice,
       sizes: data.sizes || [],
       colors: data.colors || [],
       images: data.images || {},

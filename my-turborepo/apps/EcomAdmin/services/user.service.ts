@@ -24,3 +24,8 @@ export async function logoutUser() {
     });
 }
 
+export async function getAllUsers() {
+    return apiClient(`${BackenedUrl}/auth/all-users`, {
+        method: "GET",
+    });
+}

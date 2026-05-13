@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import type { AuthRequest } from '@repo/shared'
 import { LoginDto, SignupDto } from './dto';
 import type { Response } from 'express';
-import { IsAuthenticatedGuard } from '@repo/shared';
+import { IsAuthenticatedGuard, Roles, RolesGuard } from '@repo/shared';
 import { ACCESS_COOKIE_OPTION, REFRESH_COOKIE_OPTION } from '@repo/shared';
 
 @Controller('auth')
@@ -39,7 +39,7 @@ export class AuthController {
 
         this.setAuthCookies(res, result.tokens)
         return result.user
-    }
+    };
 
 
 
@@ -66,9 +66,11 @@ export class AuthController {
         res.clearCookie('accessToken', { ...ACCESS_COOKIE_OPTION });
         res.clearCookie('refreshToken', { ...REFRESH_COOKIE_OPTION });
         const userId = req.user.sub;
-        const refreshToken =  req.cookies?.refreshToken;
+        const refreshToken = req.cookies?.refreshToken;
         return this.authService.logout(userId, refreshToken);
     };
+
+
     @Post('refresh')
     async refresh(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
         const refreshToken = req.cookies?.refreshToken;

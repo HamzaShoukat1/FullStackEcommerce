@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "pnpm dlx tsx  --watch src/main.ts",
+    "dev": "pnpm dlx tsx  --watch src/main.ts --port 3007",
     "build": "tsc",
     "start": "node dist/main.js",
     "check-types": "tsc --noEmit"
@@ -29,6 +29,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@types/node": "^20.19.37",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",

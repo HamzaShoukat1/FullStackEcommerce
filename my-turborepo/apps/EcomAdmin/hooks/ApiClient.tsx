@@ -16,5 +16,5 @@ export async function apiClient(url: string, options?: RequestInit) {
     throw new Error(data?.message || "Something went wrong");
   }
 
-  return data
+  return data.data
 }

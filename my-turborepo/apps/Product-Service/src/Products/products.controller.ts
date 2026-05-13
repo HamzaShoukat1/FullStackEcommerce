@@ -11,7 +11,7 @@ export class ProductsController {
   @Get()
   async getAll(@Query() query: any): Promise<unknown> {
     return this.productsService.getAll(query);
-  }
+  };
 
   @Get(':id')
   async getOne(@Param('id') id: string): Promise<unknown> {

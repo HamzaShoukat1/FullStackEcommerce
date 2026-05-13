@@ -20,7 +20,7 @@ function UseProtectedRoute({
         return;
       }
 
-      if (user.data.role !== "ADMIN") {
+      if (user.role !== "ADMIN") {
         router.push("/Unauthorized");
       }
     }

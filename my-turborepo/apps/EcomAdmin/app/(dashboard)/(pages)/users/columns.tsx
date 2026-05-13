@@ -3,6 +3,7 @@
 import { User } from "@/app/Validations";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import getFormattedCreationDate from "@/app/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 
@@ -38,26 +38,15 @@ export const columns: ColumnDef<User>[] = [
       />
     ),
   },
-  {
-    accessorKey: "avatar",
-    header: "Avatar",
-    cell: ({ row }) => {
-      const user = row.original;
-      return (
-        <div className="w-9 h-9 relative">
-          <Image
-            src={user.avatar}
-            alt={user.fullName}
-            fill
-            className="rounded-full object-cover"
-          />
-        </div>
-      );
-    },
+
+
+    {
+    accessorKey: "firstName",
+    header: "firstName",
   },
-  {
-    accessorKey: "fullName",
-    header: "User",
+    {
+    accessorKey: "lastName",
+    header: "lastName",
   },
   {
     accessorKey: "email",
@@ -66,32 +55,65 @@ export const columns: ColumnDef<User>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="w-40 justify-start"
         >
           Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-4" />
         </Button>
       );
     },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status");
+      const email = row.getValue("email");
+      return <div className="truncate w-50">{email as string}</div>;
+    },
+  },
+
+
+
+  // Harmonized Status Column
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => {
+      const role = row.getValue("role") as string;
+      let colorClass = "bg-gray-300 text-gray-800";
+      if (role === "ADMIN") colorClass = "bg-green-500/40 text-white";
+      else if (role === "USER") colorClass = "bg-blue-500/40 text-white-900";
+
+      return (
+        <div
+          className={cn(
+            `p-1 rounded-md w-24 text-xs text-center `,
+            colorClass
+          )}
+        >
+          {role.charAt(0).toUpperCase() + role.slice(1)}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "createdAt",
+    header: "Created ",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt");
 
       return (
         <div
           className={cn(
             `p-1 rounded-md w-max text-xs`,
-            status === "active" && "bg-green-500/40",
-            status === "inactive" && "bg-red-500/40"
+            createdAt === "ADMIN" && "bg-green-500/40",
+            createdAt === "USER" && "bg-blue-500/40"
           )}
         >
-          {status as string}
+          {getFormattedCreationDate(createdAt)}
         </div>
       );
     },
   },
+
+
   {
     id: "actions",
     cell: ({ row }) => {

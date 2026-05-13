@@ -14,10 +14,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Product } from "../../Validations";
+import type { ProductDTO } from "@repo/shared"
 
 
-export const columns: ColumnDef<Product>[] = [
+
+export const columns: ColumnDef<ProductDTO>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -41,10 +42,20 @@ export const columns: ColumnDef<Product>[] = [
     header: "Image",
     cell: ({ row }) => {
       const product = row.original;
+      const firstColor = product.colors && product.colors.length > 0 ? product.colors[0] : "";
+      const imageUrl = product.images && firstColor ? product.images[firstColor] : "";
+      // Only render Image if imageUrl is a non-empty string
+      if (!imageUrl || imageUrl.trim() === "") {
+        return (
+          <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground border">
+            N/A
+          </div>
+        );
+      }
       return (
         <div className="w-9 h-9 relative">
           <Image
-            src={product.images[product.colors[0]]}
+            src={imageUrl}
             alt={product.name}
             fill
             className="rounded-full object-cover"
@@ -97,7 +108,7 @@ export const columns: ColumnDef<Product>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/products/${product.id}`}>View customer</Link>
+              <Link href={`/products/${product.id}`}>View Products</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

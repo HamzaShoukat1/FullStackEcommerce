@@ -59,7 +59,7 @@ export type PaymentDTO = {
   orderId: string;
 
   amount: number;
-  status: 'PENDING' | 'SUCCESS' | 'FAILED';
+  status:  'SUCCESS' | 'FAILED';
 
   createdAt: string;
 

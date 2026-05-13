@@ -32,7 +32,7 @@ async function bootstrap() {
     // app.use(helmet());
     app.use(cookieparser());
 
-    const allowedOrigins = ['http://localhost:3001']
+    const allowedOrigins = ['http://localhost:3001', 'http://localhost:3010']
     app.enableCors({
       origin: allowedOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -62,7 +62,7 @@ async function bootstrap() {
     // }
 
     // const port = ('port', 3000);
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 3007;
     await app.listen(port);
     logger.log(`Application is running on: http://localhost:${port}`);
 
