@@ -10,12 +10,11 @@ function useCurrentAdmin() {
   } = useQuery({
     queryKey: ["admin"],
     queryFn: () => getCurrentUser(),
-    retry: false,
+    retry: 1,
+    retryDelay: 500,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
-
-
-  
 
   return {
     user: isError ? null : data ?? null, 

@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException, NotFoundException, ConflictException
 import { JwtService } from "@nestjs/jwt";
 import { prisma, type User } from "@repo/db";
 import * as bcrypt from "bcrypt";
-import { LoginDto, SignupDto, UserResponseDto } from "./dto";
+import { LoginDto, SignupDto, UserResponseDto } from "./dto/auth.dto";
 import {
     getJwtAccessExpires,
     getJwtRefreshExpires,

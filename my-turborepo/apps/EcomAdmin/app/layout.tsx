@@ -1,8 +1,9 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/hooks/provider";
-import UseProtectedRoute from "@/hooks/Useprotectedroute";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,20 +24,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
-
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
       >
         <Providers>
-          {/* <UseProtectedRoute> */}
-            {children}
-          {/* </UseProtectedRoute> */}
+          {children}
         </Providers>
-
       </body>
     </html>
   );

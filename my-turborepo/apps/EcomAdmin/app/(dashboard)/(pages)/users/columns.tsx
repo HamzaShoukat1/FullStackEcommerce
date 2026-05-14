@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@/app/Validations";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import getFormattedCreationDate from "@/app/utils";
@@ -16,10 +15,10 @@ import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { UserDTO } from "@repo/shared";
 
 
-
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserDTO>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -118,6 +117,7 @@ export const columns: ColumnDef<User>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original;
+      console.log("Rendering actions for user:", user);
 
       return (
         <DropdownMenu>
@@ -130,13 +130,13 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
+              onClick={() => navigator.clipboard.writeText(user.id.toString())}
             >
               Copy user ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/users/${user.id}`}>View customer</Link>
+              <Link href={`/users/${user?.id}`}>View customer</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

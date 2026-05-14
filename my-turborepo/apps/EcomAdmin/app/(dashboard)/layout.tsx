@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import AppSidebar from "@/components/shared/SIdebar";
 import { ThemeProvider } from "@/components/shared/provider/themeProvider";
@@ -20,24 +21,25 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
   return (
-    <div className="flex ">
-      <Useprotectedroute>
+    <div className="flex justify-center items-center h-screen " suppressHydrationWarning>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar />
-            <main className="w-full flex-1">
-              <Navbar />
-              <div className="px-4">{children}</div>
-            </main>
-          </SidebarProvider>
-        </ThemeProvider>
-      </Useprotectedroute>
+        <Useprotectedroute>
+
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SidebarProvider defaultOpen={defaultOpen}>
+              <AppSidebar />
+              <main className="w-full flex-1">
+                <Navbar />
+                <div className="px-4">{children}</div>
+              </main>
+            </SidebarProvider>
+          </ThemeProvider>
+        </Useprotectedroute>
     </div>
   );
 }

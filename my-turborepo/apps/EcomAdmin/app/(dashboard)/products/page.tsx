@@ -1,11 +1,17 @@
+"use client"
+
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getAllProducts } from "@/services/product.service";
 import { ProductDTO } from "@repo/shared";
-const ProductsPage = async () => {
+import { useQuery } from "@tanstack/react-query";
+const ProductsPage = () => {
 
+  const { data } = useQuery<ProductDTO[]>({
+    queryKey: ["products"],
+    queryFn: getAllProducts,
+  })
 
-  const data: ProductDTO[] = await getAllProducts();
   return (
     <div className="">
       <div className="mb-8 px-4 py-2 bg-secondary rounded-md">

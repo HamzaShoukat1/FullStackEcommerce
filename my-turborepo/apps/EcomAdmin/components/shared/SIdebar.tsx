@@ -42,6 +42,7 @@ import AddUser from "./AddUser";
 import AddOrder from "./AddOrder";
 import AddCategory from "./AddCategory";
 import AddProduct from "./Addproduc";
+import useCurrentAdmin from "@/hooks/Usecurrentadmin";
 
 const items = [
   {
@@ -72,6 +73,9 @@ const items = [
 ];
 
 const AppSidebar = () => {
+  const {user} = useCurrentAdmin()
+  const role = user?.role || "ADMIN";
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="py-4">
@@ -229,7 +233,7 @@ const AppSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> John Doe <ChevronUp className="ml-auto" />
+                  <User2 /> {role}<ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

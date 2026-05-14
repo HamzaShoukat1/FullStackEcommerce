@@ -16,6 +16,15 @@ export type ProductDTO = {
   createdAt: string;
   updatedAt: string;
 };
+export type UserDTO = {
+  id: number;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: string;
+  createdAt: string;
+  updatedAt?: string;
+};
 
 export type CartItemDTO = {
     id: number;
