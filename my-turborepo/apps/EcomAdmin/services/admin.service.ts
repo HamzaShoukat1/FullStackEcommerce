@@ -2,22 +2,22 @@ import { apiClient } from "@/hooks/ApiClient";
 
 const BackenedUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3003";
 
-export async function getAllUsers() {
+export async function getAllUsers(authToken: string) {
     return apiClient(`${BackenedUrl}/admin/all-users`, {
         method: "GET",
+        headers: {
+            Authorization: `Bearer ${authToken}`
+        },
+        next:{revalidate:40}
     });
 }
 
-// export async function getSingleUser(id: string) {
-//     return apiClient(`${BackenedUrl}/admin/user/${id}`, {
-//         method: "GET",
-//     });
-// }
 
 export async function createUser(userData: { firstName: string; lastName: string; email: string; password: string }) {
     return apiClient(`${BackenedUrl}/admin/create-user`, {
         method: "POST",
         body: JSON.stringify(userData),
+
     });
 }
 
@@ -34,9 +34,14 @@ export async function deleteUser(id: number) {
     });
 }
 
-export async function getSingleUserDetails(id: number) {
+export async function getSingleUserDetails(id: number, authToken: string) {
     if (!id) throw new Error("Invalid user id");
     return apiClient(`${BackenedUrl}/admin/user/${id}`, {
-        method: "GET"
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${authToken}`
+        },
+        next:{revalidate: 40} 
+        
     })
 }

@@ -1,4 +1,3 @@
-"use client";
 
 import {
   Breadcrumb,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import getFormattedCreationDate from "@/app/utils";
 import { getSingleUserDetails } from "@/services/admin.service";
+import { cookies } from "next/headers";
 
 import {
   HoverCard,
@@ -18,51 +18,60 @@ import {
 } from "@/components/ui/hover-card";
 import { Progress } from "@/components/ui/progress";
 import { BadgeCheck, Candy, Citrus, Shield } from "lucide-react";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import EditUser from "@/components/shared/EditUsers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AppLineChart from "@/components/shared/Applinechart";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import EditUserButton from "@/components/shared/EditUserinfo";
 
 
-
-const SingleUserPage =  () => {
-  const params = useParams();
-  const idParam = Number(params.id);
-  
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 
+const SingleUserPage = async ({ params }: PageProps) => {
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("accessToken")?.value;
 
-  // 2. Fetch dataset with react-query
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["users", idParam],
-    queryFn: () => getSingleUserDetails(idParam),
-    enabled: !!idParam
-  });
-
-  console.log("Fetched user dat2121a:", data);
-
-  
-
-  // 3. Render skeleton/loading indicator during sync timelines
-  if (isLoading) {
+  if (!authToken) {
     return (
-      <div className="flex items-center justify-center h-screen text-muted-foreground">
-        Loading user profiles...
+      <div className="p-4 md:p-6">
+        <h1 className="text-2xl font-semibold text-red-500">Unauthorized</h1>
+        <p className="text-muted-foreground mt-2">You must be logged in to view this page.</p>
       </div>
     );
   }
+  const resolvedParams = await params;
+  const idParam = Number(resolvedParams.id);
 
-  // 4. Handle runtime empty/error responses cleanly
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-500 font-medium">
-        User records not found
-      </div>
-    );
+
+  let data = null;
+
+  try {
+    const response = await getSingleUserDetails(idParam, authToken);
+    // If your service already extracts JSON data automatically, you can remove '.json()'
+    data = typeof response.json === "function" ? await response.json() : response;
+
+    if (!data) {
+      return (
+        <div className="p-4 md:p-6">
+          <h1 className="text-2xl font-semibold">User Not Found</h1>
+          <p className="text-muted-foreground mt-2">The user you are looking for does not exist.</p>
+        </div>
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    
   }
+
+
+
+
+
+
+
+
+
 
   // Safe structural fallback mappings for fallback rendering
   const fullName = `${data.firstName ?? ""} ${data.lastName ?? ""}`.trim() || "Unknown User";
@@ -176,12 +185,7 @@ const SingleUserPage =  () => {
           <div className="bg-primary-foreground p-4 rounded-lg border">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-semibold">User Information</h1>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm">Edit User</Button>
-                </SheetTrigger>
-                <EditUser />
-              </Sheet>
+                <EditUserButton userData={data} />
             </div>
 
             <div className="space-y-4 mt-4">

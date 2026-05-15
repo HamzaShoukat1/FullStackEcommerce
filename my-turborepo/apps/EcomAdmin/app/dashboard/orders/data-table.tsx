@@ -29,7 +29,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data = []
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -41,21 +41,23 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange:setRowSelection,
     state: {
       sorting,
-      rowSelection,
+      rowSelection
     },
   });
 
+  // console.log(table);
   return (
     <div className="rounded-md border">
       {Object.keys(rowSelection).length > 0 && (
         <div className="flex justify-end">
-          <button className="flex items-center gap-2 bg-red-500 text-white px-2 py-1 text-sm rounded-md m-4 cursor-pointer">
-            <Trash2 className="w-4 h-4"/>
-            Delete User(s)
+          <button className="flex items-center gap-2 bg-red-500 text-white px-2 py-1 text-sm rounded-md m-4 cursor-po">
+            <Trash2  className=" w-4 h-4"/>
+            Delete Payment(s)
           </button>
+
         </div>
       )}
       <Table>
@@ -78,7 +80,7 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows?.length? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -100,6 +102,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+    
       <DataTablePagination table={table} />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, LogOut, Moon, Settings, Sun, User } from 'lucide-react'
+import {  Moon, Settings, Sun, User } from 'lucide-react'
 import Link from 'next/link'
 import { AvatarFallback, AvatarImage, Avatar } from '../ui/avatar'
 import {
@@ -27,7 +27,7 @@ export default function Navbar() {
     mutationFn: logoutUser,
     onSuccess: () => {
       queryClient.clear()
-      router.push("/sign-in")
+      router.push("/dashboard/sign-in")
       router.refresh()
     },
     onError: (error) => {
@@ -48,7 +48,8 @@ export default function Navbar() {
 
       {/* //right side  */}
       <div className='flex items-center gap-2 '>
-        <Link href="/">Dashboard</Link>
+        <Link href="/
+        dashboard">Dashboard</Link>
         {/* //theme menu  */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className='cursor-pointer'>

@@ -24,15 +24,15 @@ import { Button } from "../ui/button";
 import { editUserformSchematype } from "@/app/Validations";
 import { editUserformSchema } from "@/app/Validations";
 
-const EditUser = () => {
+const EditUser = ({ initialData }: { initialData: any }) => {
   const form = useForm<editUserformSchematype>({
     resolver: zodResolver(editUserformSchema),
     defaultValues: {
-      fullName: "john.doe",
-      email: "john.doe@gmail.com",
-      phone: "+1 234 5678",
-      address: "New York, NY",
-      city:"55a a"
+      fullName: initialData.fullName || "john.doe",
+      email: initialData.email || "john.doe@gmail.com",
+      phone: initialData.phone || "+1 234 5678",
+      address: initialData.address || "New York, NY",
+      city: initialData.city || "55a a"
     },
   });
   return (

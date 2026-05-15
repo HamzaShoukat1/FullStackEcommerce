@@ -117,7 +117,6 @@ export const columns: ColumnDef<UserDTO>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original;
-      console.log("Rendering actions for user:", user);
 
       return (
         <DropdownMenu>
@@ -136,7 +135,7 @@ export const columns: ColumnDef<UserDTO>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/users/${user?.id}`}>View customer</Link>
+              <Link href={`/dashboard/users/${user?.id}`}>View customer</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
