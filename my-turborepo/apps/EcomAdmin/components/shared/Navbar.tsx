@@ -20,6 +20,7 @@ import { useRouter } from 'next/dist/client/components/navigation';
 import { logoutUser } from '@/services/user.service';
 
 export default function Navbar() {
+  
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -27,7 +28,7 @@ export default function Navbar() {
     mutationFn: logoutUser,
     onSuccess: () => {
       queryClient.clear()
-      router.push("/dashboard/sign-in")
+      router.push("/sign-in")
       router.refresh()
     },
     onError: (error) => {

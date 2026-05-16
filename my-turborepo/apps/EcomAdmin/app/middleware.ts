@@ -7,13 +7,13 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 1. If user is NOT logged in and trying to access dashboard
-  if (!accessToken && pathname.startsWith("/dashboard")) {
+  if (!accessToken && pathname.startsWith("/")) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
   // 2. If user IS logged in and trying to access sign-in page
   if (accessToken && (pathname.startsWith("/sign-in") || pathname === "/")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
@@ -21,5 +21,5 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   // Matcher should include both dashboard and sign-in to handle redirects for both
-  matcher: ["/dashboard/:path*", "/sign-in", "/"],
+  matcher: ["/:path*", "/sign-in", "/"],
 };

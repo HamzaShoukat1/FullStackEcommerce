@@ -47,7 +47,7 @@ import useCurrentAdmin from "@/hooks/Usecurrentadmin";
 const items = [
   {
     title: "Home",
-    url: "/dashboard",
+    url: "/",
     icon: Home,
   },
   {
@@ -121,7 +121,7 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/dashboard/products">
+                  <Link href="/products">
                     <Shirt />
                     See All Products
                   </Link>
@@ -169,7 +169,7 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/dashboard/users">
+                  <Link href="/users">
                     <User />
                     See All Users
                   </Link>
@@ -202,7 +202,7 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/dashboard/orders">
+                  <Link href="/orders">
                     <ShoppingBasket />
                     See All Orders
                   </Link>

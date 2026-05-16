@@ -18,7 +18,7 @@ import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export default function SigninDialog({ open:initialOpen, redirectUrl = "/dashboard" }: any) {
+export default function SigninDialog({ open:initialOpen, redirectUrl = "/" }: any) {
     const router = useRouter()
     const queryClient = useQueryClient()
     const [open, setopen] = useState(initialOpen)

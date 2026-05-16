@@ -13,26 +13,20 @@ export default function AuthLayout({
   const router = useRouter();
 
   useEffect(() => {
-    // Only redirect if we've finished loading and user exists
     if (!loading && user) {
-      router.push('/dashboard');
+      router.push('/');
     }
   }, [user, loading, router]);
 
-  // While loading, don't render anything to prevent hydration mismatch
+  // FIXED: Standard layout styling used instead of duplicate html/body tags
   if (loading) {
     return (
-      <html lang="en" suppressHydrationWarning>
-        <body className="bg-black">
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-white">Loading...</div>
-          </div>
-        </body>
-      </html>
+      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
     );
   }
 
-  // Only render auth pages if user is NOT logged in
   if (user) {
     return null;
   }
