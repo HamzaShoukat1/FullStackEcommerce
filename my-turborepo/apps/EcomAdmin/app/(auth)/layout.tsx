@@ -22,7 +22,7 @@ export default function AuthLayout({
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-white flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <div className="text-gray-800">Loading...</div>
       </div>
     );
   }
@@ -31,5 +31,6 @@ export default function AuthLayout({
     return null;
   }
 
-  return <>{children}</>;
+  // Auth pages should have white background to ensure proper dialog visibility
+  return <div className="min-h-screen w-full bg-white">{children}</div>;
 }

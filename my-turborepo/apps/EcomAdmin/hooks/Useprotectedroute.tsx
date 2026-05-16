@@ -28,7 +28,7 @@ function UseProtectedRoute({
     if (user.role !== "ADMIN") {
       router.push("/Unauthorized");
     }
-  }, [user, loading, router, isClient]);
+  }, [ user,loading, router, isClient]);
 
   // Don't render anything during loading or hydration to prevent flash
   if (!isClient || loading) {

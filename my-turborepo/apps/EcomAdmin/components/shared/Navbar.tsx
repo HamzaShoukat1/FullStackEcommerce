@@ -28,8 +28,8 @@ export default function Navbar() {
     mutationFn: logoutUser,
     onSuccess: () => {
       queryClient.clear()
+      queryClient.invalidateQueries({ queryKey: ["admin"] })
       router.push("/sign-in")
-      router.refresh()
     },
     onError: (error) => {
       console.error("Logout failed:", error);
