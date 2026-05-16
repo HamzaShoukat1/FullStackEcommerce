@@ -27,7 +27,7 @@ export default function DashboardError({
     const handleResetAndRefresh = () => {
         // 1. Recover standard Next.js reactive framework render trees
         reset();
-        
+
         // 2. Wipe memory cache and force fresh data from origin server
         window.location.reload();
     };
@@ -45,8 +45,8 @@ export default function DashboardError({
                     {isBrowserOffline ? "Network Disconnected" : "Connection Timeout"}
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-sm">
-                    {isBrowserOffline 
-                        ? "Your device appears to be offline. Check your internet connection and reload." 
+                    {isBrowserOffline
+                        ? "Your device appears to be offline. Check your internet connection and reload."
                         : "The server took too long to respond. Please refresh the page to try again."
                     }
                 </p>

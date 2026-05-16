@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, UseGuards } from "@nestjs/common";
-import type { AuthRequest } from "@repo/shared";
+import type { AuthRequest, OrderChartType } from "@repo/shared";
 import { IsAuthenticatedGuard, Roles, RolesGuard } from "@repo/shared";
 import { OrderService } from "./Order.service.js";
 import type { Order } from "@repo/db";
@@ -25,7 +25,13 @@ export class OrderController {
         const allOrders = await this.orderService.getAllOrders()
         return allOrders;
 
-    }
+    };
 
+    @UseGuards(IsAuthenticatedGuard, RolesGuard)
+    @Roles("ADMIN")
+    @Get('chart-data')
+    async getOrderChartData(): Promise<OrderChartType[]> {
+        return this.orderService.orderChartData();
+    }
 
 }

@@ -10,6 +10,17 @@ export async function getAllOrders(authToken: string) {
         headers: {
             Authorization: `Bearer ${authToken}`
         },
-        next:{revalidate: 40}
+        next: { revalidate: 40 }
     });
+}
+
+
+export async function getOrderChartData(authToken: string) {
+    return apiClient(`${backendUrl}/chart-data`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${authToken}` },
+        next: { revalidate: 60 }
+
+    })
+
 }

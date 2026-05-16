@@ -53,4 +53,9 @@ export interface AuthRequest extends Request {
         accessToken?: string;
         refreshToken?: string;
     }
+};
+export interface OrderChartType {
+  month: string;
+  total: number;
+  successful: number;
 }

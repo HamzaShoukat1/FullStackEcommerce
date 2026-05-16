@@ -4,7 +4,9 @@ import { DataTable } from "./data-table";
 import { getAllUsers } from "@/services/admin.service";
 import { cookies } from "next/dist/server/request/cookies";
 export default async function UsersPage() {
+
   let cookiesAuth = await cookies();
+
   const authToken = cookiesAuth.get("accessToken")?.value;
 
   if (!authToken) {
