@@ -18,5 +18,7 @@ export async function apiClient(url: string, options?: RequestInit) {
   // if (data && typeof data === "object" && "data" in data && data.data !== undefined) {
   //   return data.data;
   // }
+  console.log("ers",response)
+  console.log("data",data)
   return data.data
 }

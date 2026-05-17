@@ -27,7 +27,7 @@ const AppBarChart = ({ dataPromise }: { dataPromise: Promise<OrderChartType[]> }
   const chartData = use(dataPromise);
   return (
     <div className="">
-      <h1 className="text-lg font-medium mb-6">Total Revenue</h1>
+      <h1 className="text-lg  font-medium mb-6">Total Revenue</h1>
       <ChartContainer config={chartConfig} className="min-h-50 w-full">
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />

@@ -15,6 +15,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { OrderDTO } from "@repo/shared";
+import getFormattedCreationDate from "@/app/utils";
 
 export const columns: ColumnDef<OrderDTO>[] = [
   {
@@ -88,6 +89,27 @@ export const columns: ColumnDef<OrderDTO>[] = [
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
+ {
+    accessorKey: "createdAt",
+    header: "Created ",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt");
+      const formattedDate = getFormattedCreationDate(createdAt as Number);
+
+      return ( 
+   <div>
+          {formattedDate}
+        </div>
+      )
+
+    },
+  },
+
+
+
+
+
+
   {
     id: "actions",
     cell: ({ row }) => {

@@ -21,7 +21,7 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
   return (
-    <div className="flex justify-center items-center h-screen " suppressHydrationWarning>
+    <div className=" bg-background" suppressHydrationWarning>
 
         <Useprotectedroute>
 

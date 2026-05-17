@@ -39,14 +39,14 @@ export class ProductsService {
         mode: "insensitive",
       };
     }
-    console.log("QUERY:", query);
-    console.log("WHERE:", where);
-
     const allProducts = await prisma.product.findMany({
       where,
       orderBy,
       take: limit ? Number(limit) : undefined,
-    });
+
+    },
+
+  );
 
     return allProducts;
   }

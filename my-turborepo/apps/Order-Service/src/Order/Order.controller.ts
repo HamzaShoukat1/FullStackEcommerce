@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, UseGuards } from "@nestjs/common";
+import { Controller, Get, Inject, Query, UseGuards } from "@nestjs/common";
 import type { AuthRequest, OrderChartType } from "@repo/shared";
 import { IsAuthenticatedGuard, Roles, RolesGuard } from "@repo/shared";
 import { OrderService } from "./Order.service.js";
@@ -21,8 +21,9 @@ export class OrderController {
     @UseGuards(IsAuthenticatedGuard, RolesGuard)
     @Roles("ADMIN")
     @Get('all-orders')
-    async getAllOrders(): Promise<Order[]> {
-        const allOrders = await this.orderService.getAllOrders()
+    async getAllOrders(@Query('limit') limit?: number): Promise<Pick<Order, "id" | "email" | "amount" | "status" | "createdAt">[]> {
+        const allOrders = await this.orderService.getAllOrders(limit);
+
         return allOrders;
 
     };

@@ -132,7 +132,6 @@ export class PaymentService {
     }
 
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-        console.log('✅ Processing completed session:', session.id);
 
         // Validate and extract metadata
         const userId = parseInt(session.metadata?.userId as string);
@@ -177,6 +176,7 @@ export class PaymentService {
                             price: typeof item.price === 'number' ? item.price : 0,
                         })),
                     },
+                    createdAt: new Date(),
                 },
             });
 

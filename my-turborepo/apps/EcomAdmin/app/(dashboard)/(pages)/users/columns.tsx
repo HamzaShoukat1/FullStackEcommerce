@@ -97,18 +97,14 @@ export const columns: ColumnDef<UserDTO>[] = [
     header: "Created ",
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt");
+      const formattedDate = getFormattedCreationDate(createdAt as Number);
 
-      return (
-        <div
-          className={cn(
-            `p-1 rounded-md w-max text-xs`,
-            createdAt === "ADMIN" && "bg-green-500/40",
-            createdAt === "USER" && "bg-blue-500/40"
-          )}
-        >
-          {getFormattedCreationDate(createdAt)}
+      return ( 
+   <div>
+          {formattedDate}
         </div>
-      );
+      )
+
     },
   },
 

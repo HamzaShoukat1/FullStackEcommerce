@@ -42,6 +42,7 @@ export type CartItemDTO = {
 };
 
 export type OrderItemDTO = {
+  id:string
   productId: string;
   name: string;
 
@@ -57,6 +58,8 @@ export type OrderDTO = {
   userId: number;
 
   items: OrderItemDTO[];
+  amount: number;
+  email: string;
 
   total: number;
   status: 'PAID' | 'FAILED';

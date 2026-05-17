@@ -12,8 +12,18 @@ export async function getAllOrders(authToken: string) {
         },
         next: { revalidate: 40 }
     });
-}
+};
 
+
+export async function getallorderinHome(authToken: string) {
+    return apiClient(`${backendUrl}/all-orders?limit=5`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${authToken}`
+        },
+        next: { revalidate: 40 }
+    });
+};
 
 export async function getOrderChartData(authToken: string) {
     return apiClient(`${backendUrl}/chart-data`, {
