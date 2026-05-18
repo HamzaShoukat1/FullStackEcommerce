@@ -33,6 +33,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/shared": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@tanstack/eslint-plugin-query": "^5.100.10",
     "@types/node": "^20",

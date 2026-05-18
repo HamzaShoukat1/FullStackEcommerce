@@ -5,7 +5,7 @@ function useCurrentAdmin() {
   const {
     data,
     isLoading,
-    isError,
+    error: isError,
     refetch,
   } = useQuery({
     queryKey: ["admin"],
@@ -17,7 +17,8 @@ function useCurrentAdmin() {
   });
 
   return {
-    user: isError ? null : data ?? null, 
+    user:  data ?? null, 
+    error: isError,
     loading: isLoading,
     refetch,
   };

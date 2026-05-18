@@ -3,13 +3,14 @@
 import { useRouter } from "next/navigation";
 import useCurrentAdmin from "./Usecurrentadmin";
 import { useEffect, useState } from "react";
+import { is } from "date-fns/locale";
 
 function UseProtectedRoute({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useCurrentAdmin();
+  const { user, loading, error } = useCurrentAdmin();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
@@ -19,8 +20,10 @@ function UseProtectedRoute({
 
   useEffect(() => {
     if (!isClient || loading) return;
+    const hasValidToken = error?.message?.includes("Invalid token") || error?.message?.includes("No token provided")
 
-    if (!user) {
+    if (!user || hasValidToken) {
+
       router.push("/sign-in");
       return;
     }
@@ -28,7 +31,7 @@ function UseProtectedRoute({
     if (user.role !== "ADMIN") {
       router.push("/Unauthorized");
     }
-  }, [ user,loading, router, isClient]);
+  }, [user, loading, error, router, isClient]);
 
   // Don't render anything during loading or hydration to prevent flash
   if (!isClient || loading) {

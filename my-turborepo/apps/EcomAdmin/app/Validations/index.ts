@@ -1,4 +1,4 @@
-import z from "zod";
+import * as  z from "zod";
 export const categories = [
   "T-shirts",
   "Shoes",
@@ -81,10 +81,7 @@ export const addOrderformSchema = z.object({
   status: z.enum(["pending", "processing", "success", "failed"]),
 });
 export type addOrderformSchematype = z.infer<typeof addOrderformSchema>
-export const addCategoryformSchema = z.object({
-  name: z.string().min(1, { message: "Name is Required!" }),
-});
-export type addOrderCategoryformSchematype = z.infer<typeof addCategoryformSchema>
+
 
 export const addProductformSchema = z.object({
   name: z.string().min(1, { message: "Product name is required!" }),
@@ -102,6 +99,12 @@ export const addProductformSchema = z.object({
 
 export type addProductformSchematype = z.infer<typeof addProductformSchema>
 
+export const addCategoryformSchema = z.object({
+    name: z.string().min(1, { message: "Slug is Required!" }),
+    slug: z.string().min(1, { message: "Slug is Required!" }),
+
+});
+export type addOrderCategoryformSchematype = z.infer<typeof addCategoryformSchema>
 
 export type Product = {
   id: string | number;

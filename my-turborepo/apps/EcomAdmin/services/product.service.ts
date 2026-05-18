@@ -21,5 +21,11 @@ export async function getProductsinHome() {
         next: { revalidate: 60 }
     });
 
+}
+export async function createCategory(data: { name: string, slug: string }) {
+    return apiClient(`${backendUrl}/categories`, {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
 
 }

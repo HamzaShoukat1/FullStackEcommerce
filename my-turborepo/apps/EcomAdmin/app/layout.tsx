@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/hooks/provider";
+import UseProtectedRoute from "@/hooks/Useprotectedroute";
+import { Toaster } from "sonner"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,12 +27,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
-      >
+        >
         <Providers>
           {children}
+          <Toaster richColors position="top-left" closeButton />
         </Providers>
       </body>
     </html>
