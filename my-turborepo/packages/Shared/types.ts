@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { CookieOptions } from "express";
+import { first } from "rxjs";
+import  * as z from "zod";
 
 export type TokenPayload = {
     sub: number;
@@ -55,7 +57,24 @@ export interface AuthRequest extends Request {
     }
 };
 export interface OrderChartType {
-  month: string;
-  total: number;
-  successful: number;
-}
+    month: string;
+    total: number;
+    successful: number;
+};
+
+export const addCategoryformSchema = z.object({
+    name: z.string().min(1, { message: "Slug is Required!" }),
+    slug: z.string().min(1, { message: "Slug is Required!" }),
+
+});
+export type addOrderCategoryformSchematype = z.infer<typeof addCategoryformSchema>
+
+
+
+export const addUserformSchema = z.object({
+    firstName: z.string().min(2, { message: "First name must be at least 2 characters!" }),
+    lastName: z.string().min(2, { message: "Last name must be at least 2 characters!" }),
+    email: z.string().email({ message: "Invalid email address!" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters!" }),
+});
+export type addUserformSchematype = z.infer<typeof addUserformSchema>

@@ -63,17 +63,6 @@ export const editUserformSchema = z.object({
 });
 export type editUserformSchematype = z.infer<typeof editUserformSchema>
 
-export const addUserformSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Full name must be at least 2 characters!" })
-    .max(50),
-  email: z.string().email({ message: "Invalid email address!" }),
-  phone: z.string().min(10).max(15),
-  address: z.string().min(2),
-  city: z.string().min(2),
-});
-export type addUserformSchematype = z.infer<typeof addUserformSchema>
 
 export const addOrderformSchema = z.object({
   amount: z.number().min(1, { message: "Amount must be at least 1!" }),
@@ -99,12 +88,7 @@ export const addProductformSchema = z.object({
 
 export type addProductformSchematype = z.infer<typeof addProductformSchema>
 
-export const addCategoryformSchema = z.object({
-    name: z.string().min(1, { message: "Slug is Required!" }),
-    slug: z.string().min(1, { message: "Slug is Required!" }),
 
-});
-export type addOrderCategoryformSchematype = z.infer<typeof addCategoryformSchema>
 
 export type Product = {
   id: string | number;
@@ -133,3 +117,12 @@ export type User = {
 
   status: "active" | "inactive";
 };
+
+
+export const addUserformSchema = z.object({
+    firstName: z.string().min(2, { message: "First name must be at least 2 characters!" }),
+    lastName: z.string().min(2, { message: "Last name must be at least 2 characters!" }),
+    email: z.string().email({ message: "Invalid email address!" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters!" }),
+});
+export type addUserformSchematype = z.infer<typeof addUserformSchema>

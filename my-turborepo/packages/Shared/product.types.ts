@@ -15,9 +15,3 @@ export type StripeProductTypes = {
 export type categoryType = Category;
 
 
-export const addCategoryformSchema = z.object({
-    name: z.string().min(1, { message: "Slug is Required!" }),
-    slug: z.string().min(1, { message: "Slug is Required!" }),
-
-});
-export type addOrderCategoryformSchematype = z.infer<typeof addCategoryformSchema>

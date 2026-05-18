@@ -19,7 +19,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { addOrderCategoryformSchematype, addCategoryformSchema } from "@/app/Validations";
+// import { addOrderCategoryformSchematype, addCategoryformSchema } from "@/app/Validations";
+import { addOrderCategoryformSchematype, addCategoryformSchema } from "@repo/shared/types";
 import { useMutation } from "@tanstack/react-query";
 import { createCategory } from "@/services/product.service";
 import { toast } from "sonner";
@@ -89,7 +90,7 @@ const AddCategory = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isPending} className="w-full sm:w-auto cursor-pointer">
+              <Button type="submit" disabled={isPending} className="w-full sm:w-auto disabled:cursor-not-allowed cursor-pointer">
                 {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

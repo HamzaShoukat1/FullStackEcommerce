@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import useCurrentAdmin from "./Usecurrentadmin";
 import { useEffect, useState } from "react";
-import { is } from "date-fns/locale";
 
 function UseProtectedRoute({
   children,
@@ -28,9 +27,9 @@ function UseProtectedRoute({
       return;
     }
 
-    if (user.role !== "ADMIN") {
-      router.push("/Unauthorized");
-    }
+    // if (user.role !== "ADMIN") {
+    //   router.push("/Unauthorized");
+    // }
   }, [user, loading, error, router, isClient]);
 
   // Don't render anything during loading or hydration to prevent flash

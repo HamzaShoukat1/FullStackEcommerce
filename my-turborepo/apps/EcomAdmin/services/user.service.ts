@@ -24,4 +24,16 @@ export async function logoutUser() {
 
     });
 }
+export async function registerUser(registerData: { firstName: string; lastName: string; email: string; password: string }) {
+    return apiClient(`${BackenedUrl}/auth/signup`, {
+        method: "POST",
+        body: JSON.stringify(registerData),
+    });
+}
+
+export async function refreshToken() {
+    return apiClient(`${BackenedUrl}/auth/refresh`, {
+        method: "POST",
+    });
+}
 
