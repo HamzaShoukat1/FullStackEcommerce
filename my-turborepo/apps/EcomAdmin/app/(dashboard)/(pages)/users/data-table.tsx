@@ -9,6 +9,8 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import {
   Table,
@@ -21,6 +23,8 @@ import {
 import { DataTablePagination } from "@/components/shared/TablePagination";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { deleteUser } from "@/services/user.service";
+import { useRouter } from "next/dist/client/components/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,11 +33,11 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data =[]
+  data = []
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
-
+const router = useRouter();
   const table = useReactTable({
     data,
     columns,
@@ -47,14 +51,51 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+  //get key
+
+
+
+  const { mutate: deleteuserMutation, isPending } = useMutation<
+    void,
+    Error,
+    string[]
+  >({
+
+    mutationFn: async (userIds) => {
+      await Promise.all(userIds.map(id => deleteUser(id)));
+
+    },
+
+    onSuccess: () => {
+      toast.success("User has been deleted successfully!");
+      router.refresh()
+
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete user");
+    }
+  });
+
+  const handleDelete = () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    const userIds = selectedRows.map(row => (row.original as any).id);
+    if (userIds.length > 0) {
+      deleteuserMutation(userIds);
+    } else {
+      toast.error("Please select at least one user to delete");
+    }
+
+  }
+
+
 
   return (
     <div className="rounded-md border">
       {Object.keys(rowSelection).length > 0 && (
         <div className="flex justify-end">
-          <button className="flex items-center gap-2 bg-red-500 text-white px-2 py-1 text-sm rounded-md m-4 cursor-pointer">
-            <Trash2 className="w-4 h-4"/>
-            Delete User(s)
+          <button className="flex items-center gap-2 bg-red-500 text-white px-2 py-1 text-sm rounded-md m-4 cursor-pointer" onClick={() => handleDelete()} disabled={isPending}>
+            <Trash2 className="w-4 h-4" />
+            {isPending ? "Deleting..." : "Delete User(s)"}
           </button>
         </div>
       )}
@@ -68,9 +109,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 );
               })}

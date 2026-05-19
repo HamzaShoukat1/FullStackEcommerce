@@ -27,9 +27,9 @@ function UseProtectedRoute({
       return;
     }
 
-    // if (user.role !== "ADMIN") {
-    //   router.push("/Unauthorized");
-    // }
+    if (user.role !== "ADMIN") {
+      router.push("/Unauthorized");
+    }
   }, [user, loading, error, router, isClient]);
 
   // Don't render anything during loading or hydration to prevent flash

@@ -30,7 +30,11 @@ export async function registerUser(registerData: { firstName: string; lastName: 
         body: JSON.stringify(registerData),
     });
 }
-
+export async function deleteUser(userId: string) {
+    return apiClient(`${BackenedUrl}/admin/user/${userId}`, {
+        method: "DELETE",
+    });
+}
 export async function refreshToken() {
     return apiClient(`${BackenedUrl}/auth/refresh`, {
         method: "POST",
