@@ -1,7 +1,6 @@
 import "dotenv/config";
 import { CookieOptions } from "express";
-import { first } from "rxjs";
-import  * as z from "zod";
+import * as z from "zod";
 
 export type TokenPayload = {
     sub: number;
@@ -78,3 +77,97 @@ export const addUserformSchema = z.object({
     password: z.string().min(6, { message: "Password must be at least 6 characters!" }),
 });
 export type addUserformSchematype = z.infer<typeof addUserformSchema>
+
+
+
+
+// ,, 
+
+export const categories = [
+    "T-shirts",
+    "Shoes",
+    "Accessories",
+    "Bags",
+    "Dresses",
+    "Jackets",
+    "Gloves",
+] as const;
+
+
+
+export const colors = [
+    "blue",
+    "green",
+    "red",
+    "yellow",
+    "purple",
+    "orange",
+    "pink",
+    "brown",
+    "gray",
+    "black",
+    "white",
+] as const;
+
+export const sizes = [
+    "xs",
+    "s",
+    "m",
+    "l",
+    "xl",
+    "xxl",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+] as const;
+
+
+
+export const addProductformSchema = z.object({
+    name: z.string().min(1, { message: "Product name is required!" }),
+    shortDescription: z
+        .string()
+        .min(1, { message: "Short description is required!" })
+        .max(60),
+    description: z.string().min(1, { message: "Description is required!" }),
+    price: z.number().min(1, { message: "Price is required!" }),
+    categorySlug: z.string().min(1, { message: "Category is required!" }),
+    sizes: z.array(z.enum(sizes)).min(1, { message: "At least one size must be selected!" }),
+    colors: z.array(z.enum(colors)).min(1, { message: "At least one color must be selected!" }),
+    images: z.record(z.string(), z.string(), { message: "Image for each color is required!" })
+
+}).refine((data) => {
+    const missingImagesforthatColor = data.colors?.filter((color: string) => !data.images[color])
+
+    return missingImagesforthatColor?.length === 0
+}, {
+    message: "Image for each selected color is required!",
+    path: ["images"]
+})
+
+export type addProductformSchematype = z.infer<typeof addProductformSchema>
+
+
+
+export type Product = {
+    id: string | number;
+    price: number;
+    name: string;
+    shortDescription: string;
+    description: string;
+    sizes: string[];
+    colors: string[];
+    images: Record<string, string>
+};

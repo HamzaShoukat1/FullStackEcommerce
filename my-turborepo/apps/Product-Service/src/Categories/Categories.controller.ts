@@ -13,7 +13,7 @@ export class CategoriesController {
   @Get()
   async getAll() {
     return this.categoriesService.getAll();
-  }
+  };
 
   @Get(':id')
   async getOne(@Param('id') id: string) {

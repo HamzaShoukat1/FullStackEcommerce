@@ -34,3 +34,17 @@ export async function getOrderChartData(authToken: string) {
     })
 
 }
+export async function deleteOrders(ids:string, authToken: string) {
+    return apiClient(`${backendUrl}/orders/${ids}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${authToken}` },
+    });
+
+}
+export async function updateOrderStatus(orderId: string, status: string, authToken: string) {
+    return apiClient(`${backendUrl}/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify({ status }),
+    })
+}

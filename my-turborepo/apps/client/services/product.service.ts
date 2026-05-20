@@ -19,8 +19,6 @@ export async function getProducts({ category, sort, search, params }: { category
         query.append("limit", "8");
     }
 
-    console.log("sort", sort)
-    console.log("query", query)
 
 
 

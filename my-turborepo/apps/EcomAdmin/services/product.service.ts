@@ -12,6 +12,13 @@ export async function getAllProducts() {
 
 
 };
+export async function createProduct(data: { name: string, price: number, description: string, shortDescription: string, sizes: string[], colors: string[], images: Record<string, string>, categorySlug: string }) {
+    return apiClient(`${backendUrl}/products`, {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+
+}
 
 
 
@@ -26,6 +33,21 @@ export async function createCategory(data: { name: string, slug: string }) {
     return apiClient(`${backendUrl}/categories`, {
         method: "POST",
         body: JSON.stringify(data)
+    });
+
+
+
+}
+export async function deleteProducts(ids:string ) {
+    return apiClient(`${backendUrl}/products/${ids}`, {
+        method: "DELETE",
+    });
+
+}``
+export async function getCategories() {
+    return apiClient(`${backendUrl}/categories`, {
+        method: "GET",
+        next: { revalidate: 60 }
     });
 
 }

@@ -88,15 +88,18 @@ export class ProductsService {
       throw new NotFoundException(`Missing images for colors: ${missingColors.join(", ")}`);
     }
 
-    try {
       const createProduct = await prisma.product.create({ data: createData });
+      if(!createProduct.categorySlug) {
+        throw new NotFoundException("Category slug is required");
+      }
+      if(!createProduct) {
+        throw new NotFoundException("Failed to create product");
+      };
 
 
       return createProduct
-    } catch (error) {
-      throw new NotFoundException("Category not found");
-    }
-  }
+    } 
+  
   async update(id: string, data: UpdateProductDto) {
     const updateData: Prisma.ProductUpdateInput = {
       ...(data.name !== undefined && { name: data.name }),

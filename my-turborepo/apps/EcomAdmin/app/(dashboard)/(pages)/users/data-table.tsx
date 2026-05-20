@@ -37,7 +37,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
-const router = useRouter();
+  const router = useRouter();
   const table = useReactTable({
     data,
     columns,
@@ -68,6 +68,8 @@ const router = useRouter();
 
     onSuccess: () => {
       toast.success("User has been deleted successfully!");
+      setRowSelection({});
+
       router.refresh()
 
     },

@@ -38,7 +38,7 @@ const AddUser = () => {
     },
   });
 
-  const { mutate: createCategoryMutation, isPending } = useMutation<
+  const { mutate: createUserMutation  , isPending } = useMutation<
     any,
     Error,
     addUserformSchematype
@@ -54,7 +54,7 @@ const AddUser = () => {
   });
 
   const onSubmit = (data: addUserformSchematype) => {
-    createCategoryMutation(data);
+    createUserMutation(data);
   };
 
   return (
