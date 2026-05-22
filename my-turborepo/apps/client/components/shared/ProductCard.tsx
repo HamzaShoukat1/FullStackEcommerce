@@ -14,7 +14,6 @@ export default function ProductCard({ product }: { product: ProductDTO }) {
     size: product.sizes[0] ?? "",
     color: product.colors[0] ?? ""
   })
-  console.log(productsetType)
   type producttype = {
     type: "size" | "color"
     value: string
@@ -45,7 +44,7 @@ const handelAddtoCart = ()=> {
       <div className="shadow-lg rounded-lg overflow-hidden bg-white">
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
-        <div className="relative w-full aspect-2/3">
+        <div className="relative w-full aspect-2/3 bg-cover">
         {imageSrc ? (
                 <Image
             src={(product.images as Record<string,string>)?.[productsetType.color] || ""}

@@ -5,6 +5,7 @@ import "./globals.css";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import ReduxProvider from "./Store/provider";
+import { SocketProvider } from "./socket-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,13 +32,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <div className="mx-auto  p-4  sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl ">
-          <Providers>
-            <ReduxProvider>
-              <Navbar />
-              {children}
-              <Footer />
-            </ReduxProvider>
-          </Providers>
+          <SocketProvider>
+
+            <Providers>
+              <ReduxProvider>
+                <Navbar />
+                {children}
+                <Footer />
+              </ReduxProvider>
+            </Providers>
+          </SocketProvider>
         </div>
       </body>
     </html>

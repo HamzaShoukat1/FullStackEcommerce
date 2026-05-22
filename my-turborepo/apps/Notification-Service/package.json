@@ -1,5 +1,5 @@
 {
-  "name": "Email-Service",
+  "name": "Notification-Service",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -17,8 +17,13 @@
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/platform-express": "^11.1.17",
+    "@nestjs/platform-socket.io": "^11.1.21",
+    "@nestjs/websockets": "^11.1.21",
+    "@repo/db": "workspace:*",
+    "@repo/shared": "workspace:*",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

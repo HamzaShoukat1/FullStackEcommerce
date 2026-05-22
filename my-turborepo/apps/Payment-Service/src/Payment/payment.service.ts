@@ -1,20 +1,19 @@
 import "dotenv/config";
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { prisma } from "@repo/db";
-// Ensure this path is correct and doesn't use .js if you're in a TS environment
 import stripe from "../utils/stripe.service";
 import { StripeSessionResponseDto } from "../dto";
 import { Stripe } from "stripe";
 
 @Injectable()
 export class PaymentService {
+    constructor() { }
 
     async createCheckoutSession(data: {
         userId: number;
         email: string;
         items?: Array<{ name: string; price: number; quantity: number }>;
     }) {
-        // Use items from request, or fetch from database if not provided
         let items = data.items;
 
         if (!items || items.length === 0) {
@@ -35,7 +34,6 @@ export class PaymentService {
             }));
         }
 
-        // Map items for Stripe
         const lineItems = (items || []).map(item => ({
             price_data: {
                 currency: "usd",
@@ -47,7 +45,6 @@ export class PaymentService {
             quantity: item.quantity,
         }));
 
-        // Create stripe session
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
             ui_mode: "embedded_page",
@@ -61,8 +58,6 @@ export class PaymentService {
             return_url: `${process.env.FRONTEND_URL}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
         });
 
-
-        Logger.log("seesssss", session)
         return {
             client_secret: session.client_secret,
         };
@@ -76,7 +71,6 @@ export class PaymentService {
             throw new NotFoundException("Session not found");
         }
 
-
         return {
             status: session?.payment_status || "unknown",
             amount_total: session?.amount_total || 0,
@@ -88,10 +82,7 @@ export class PaymentService {
             })) || [],
             id: session.id,
         }
-
-
     };
-
 
     async processWebhook(rawBody: Buffer, signature: string) {
         const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -99,9 +90,6 @@ export class PaymentService {
         if (!endpointSecret) {
             throw new InternalServerErrorException('STRIPE_WEBHOOK_SECRET not configured');
         }
-        console.log("RAW BODY TYPE:", typeof rawBody);
-        console.log("RAW BODY LENGTH:", rawBody?.length);
-        console.log("SIGNATURE:", signature);
 
         let event: Stripe.Event;
 
@@ -109,21 +97,15 @@ export class PaymentService {
             event = stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
         } catch (error) {
             throw new BadRequestException(
-                `Webhook Signature verification failed: ${error instanceof Error ? error.message : String(error)
-                }`
+                `Webhook Signature verification failed: ${error instanceof Error ? error.message : String(error)}`
             );
         }
 
-        // Handle specific business logic based on event type
         switch (event.type) {
             case 'checkout.session.completed':
-                const session = await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
-
-                Logger.log("webhook completed", session)
-
-                Logger.log('Checkout session completed:', session);
+                const result = await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+                Logger.log('Checkout session completed processing successfully.', result);
                 break;
-
             default:
                 Logger.log('Unhandled event type:', event.type);
         }
@@ -132,14 +114,13 @@ export class PaymentService {
     }
 
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-
-        // Validate and extract metadata
         const userId = parseInt(session.metadata?.userId as string);
         if (!userId || isNaN(userId)) {
             Logger.error('Missing or invalid userId in session metadata:', session.metadata);
             throw new Error('Missing or invalid userId in session metadata');
         }
-        const amount = session.amount_total ? session.amount_total / 100 : 0; // Convert from cents to dollars
+
+        const amount = session.amount_total ? session.amount_total / 100 : 0;
         let metaDataItems: any[] = [];
         try {
             metaDataItems = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
@@ -152,50 +133,51 @@ export class PaymentService {
             throw new Error('Failed to parse items from session metadata');
         }
 
-        // Validate each item
-        for (const item of metaDataItems) {
-            if (!item.productId || !item.quantity) {
-                Logger.error('Invalid item in metadata:', item);
-                throw new Error('Invalid item in metadata');
-            }
-        }
-
         try {
-            const order = await prisma.order.create({
-                data: {
-                    userId: userId,
-                    email: session.customer_details?.email || session.customer_email || "unknown",
-                    amount: amount,
-                    status: "SUCCESS",
-                    shippingAddress: session.customer_details?.address
-                        || {},
-                    products: {
-                        create: metaDataItems.map((item: any) => ({
-                            productId: item.productId,
-                            quantity: item.quantity || 1,
-                            price: typeof item.price === 'number' ? item.price : 0,
-                        })),
+            const result = await prisma.$transaction(async (tx) => {
+
+                const order = await tx.order.create({
+                    data: {
+                        userId: userId,
+                        email: session.customer_details?.email || session.customer_email || "unknown",
+                        amount: amount,
+                        status: "SUCCESS",
+                        shippingAddress: session.customer_details?.address
+                            ? JSON.parse(JSON.stringify(session.customer_details.address))
+                            : {},
+                        products: {
+                            create: metaDataItems.map((item: any) => ({
+                                productId: item.productId,
+                                quantity: item.quantity || 1,
+                                price: typeof item.price === 'number' ? item.price : 0,
+                            })),
+                        },
+                        createdAt: new Date(),
                     },
-                    createdAt: new Date(),
-                },
+                });
+
+                const notification = await tx.notification.create({
+                    data: {
+                        userId: userId,
+                        orderId: order.id, // 👈 Links perfectly to your real Order primary key
+                        title: "Order Placed Successfully",
+                        message: `Your order #${order.id} has been placed successfully.`,
+                        isRead: false
+                    }
+                });
+
+                // 3. Clear out the database shopping cart list items inside the transaction safety window
+                // await tx.cartItem.deleteMany({ where: { userId } });
+
+                return { order, notification };
             });
 
-            Logger.log('✅ Order saved to DB:', order.id);
+            console.log("✅ Order, Notification, and Cart Cleanup completed successfully:", result);
+            return result;
 
-            // Optionally clear cart items after order
-            // await prisma.cartItem.deleteMany({ where: { userId } });
-
-            return order;
         } catch (error) {
-            Logger.error('❌ Database error saving order:', error);
+            Logger.error('❌ Database error saving order/notification package:', error);
             throw error;
         }
-
-
-
-
-
     }
-
-
 }

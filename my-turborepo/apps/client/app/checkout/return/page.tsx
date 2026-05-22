@@ -3,18 +3,32 @@
 import { getCurrentSession } from "@/services/payment.service"
 import { useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function ReturnPage() {
     const searchParams = useSearchParams()
     const sessionId = searchParams.get("session_id")
+const [client, setclient] = useState(false)
+
+
+
+
+
 
     const { data: currentSession, isLoading, isError, error } = useQuery({
         queryKey: ["session_id", sessionId],
         queryFn: () => getCurrentSession(sessionId!),
         enabled: !!sessionId,
-    })
-    console.log("Current Session:", currentSession)
-    console.log("Session ID:", sessionId)
+    });
+
+
+    useEffect(() => {
+    setclient(true)
+}, [])
+
+if(!client) {
+    return null
+}
 
     if (!sessionId) {
         return <div className="p-8 text-center">No session ID provided</div>
@@ -29,6 +43,7 @@ export default function ReturnPage() {
     }
 
     return (
+
         <div className="max-w-2xl mx-auto p-8">
             <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
                 <h1 className="text-2xl font-bold text-green-800 mb-2">Payment Successful!</h1>

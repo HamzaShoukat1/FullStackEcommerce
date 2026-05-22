@@ -20,17 +20,18 @@ enum OrderStatus {
 
 // Models
 model User {
-  id              Int            @id @default(autoincrement())
-  email           String         @unique
-  passwordHash    String
-  firstName       String?
-  lastName        String?
-  role            UserRole       @default(USER)
-  refreshTokens   RefreshToken[]
-  orders          Order[]
-  cartItems       CartItem[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  passwordHash  String
+  firstName     String?
+  lastName      String?
+  role          UserRole       @default(USER)
+  refreshTokens RefreshToken[]
+  orders        Order[]
+  notifications Notification[]
+  cartItems     CartItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model RefreshToken {
@@ -56,21 +57,21 @@ model Category {
 }
 
 model Product {
-  id               String      @id @default(uuid())
+  id               String  @id @default(uuid())
   name             String
   shortDescription String
   description      String
-  price     Decimal   @db.Decimal(10, 2)
+  price            Decimal @db.Decimal(10, 2)
 
-  sizes            String[]
-  colors           String[]
-  images           Json
-  categorySlug     String?
-  category         Category?   @relation(fields: [categorySlug], references: [slug])
-  orderItems       OrderItem[]
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  cartItems        CartItem[]
+  sizes        String[]
+  colors       String[]
+  images       Json
+  categorySlug String?
+  category     Category?   @relation(fields: [categorySlug], references: [slug])
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  cartItems    CartItem[]
 }
 
 model Order {
@@ -92,7 +93,7 @@ model CartItem {
   productId String
   quantity  Int
 
-  product Product @relation(fields: [productId], references: [id],onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id])
 }
 
@@ -103,8 +104,21 @@ model OrderItem {
   quantity  Int
   price     Decimal
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id],onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([productId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    Int
+  orderId   String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

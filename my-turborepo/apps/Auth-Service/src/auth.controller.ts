@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import type { AuthRequest } from '@repo/shared'
 import { LoginDto, SignupDto } from './dto/auth.dto';
 import type { Response } from 'express';
-import { IsAuthenticatedGuard, Roles, RolesGuard } from '@repo/shared';
+import { IsAuthenticatedGuard } from '@repo/shared';
 import { ACCESS_COOKIE_OPTION, REFRESH_COOKIE_OPTION } from '@repo/shared';
 
 @Controller('auth')

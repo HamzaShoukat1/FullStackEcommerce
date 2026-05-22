@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { Bell, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import ShoppingCartIcon from "./ShoppingCartIcon";
 import ClientOnly from "@/app/hooks/onlyClient";
 import { useState } from "react";
@@ -11,13 +11,13 @@ import SignupDialog from "../Dialogs/SignupDialog";
 import SigninDialog from "../Dialogs/SigninDialog";
 import usecurrentUser from "@/app/hooks/usecurrentUser";
 import LogoutDialog from "../Dialogs/LogoutDialog";
+import NotificationBell from "./NotificationBell"; // Imported your component cleanly
 
 export default function Navbar() {
     const [signupopen, setsignupopen] = useState(false);
     const [signinopen, setsigninopen] = useState(false);
 
     const { user, loading } = usecurrentUser();
-
 
     return (
         <>
@@ -44,36 +44,41 @@ export default function Navbar() {
                         <Home className="w-4 h-4 text-gray-600" />
                     </Link>
 
-                    <Bell className="w-4 h-4 text-gray-600 cursor-pointer" />
+                    {/* FIXED: Swapped static Bell icon out and grouped the real-time NotificationBell inside ClientOnly */}
+                    <ClientOnly>
+                        <NotificationBell />
+                    </ClientOnly>
 
                     <ClientOnly>
                         <ShoppingCartIcon />
                     </ClientOnly>
 
                     {/* AUTH SECTION */}
-                    <div className="flex items-center gap-3">
-                        {loading ? (
-                            <div className="w-20 h-9 bg-gray-200 rounded-lg animate-pulse" />
-                        ) : user ? (
-                            <LogoutDialog />
-                        ) : (
-                            <>
-                                <button
-                                    className="cursor-pointer px-3 py-2 bg-yellow-300 hover:bg-yellow-400 rounded-lg transition-colors"
-                                    onClick={() => setsigninopen(true)}
-                                >
-                                    Sign in
-                                </button>
+                    <ClientOnly>
+                        <div className="flex items-center gap-3">
+                            {loading ? (
+                                <div className="w-20 h-9 bg-gray-200 rounded-lg animate-pulse" />
+                            ) : user ? (
+                                <LogoutDialog />
+                            ) : (
+                                <>
+                                    <button
+                                        className="cursor-pointer px-3 py-2 bg-yellow-300 hover:bg-yellow-400 rounded-lg transition-colors"
+                                        onClick={() => setsigninopen(true)}
+                                    >
+                                        Sign in
+                                    </button>
 
-                                <button
-                                    className="cursor-pointer px-3 py-2 bg-yellow-300 hover:bg-yellow-400 rounded-lg transition-colors"
-                                    onClick={() => setsignupopen(true)}
-                                >
-                                    Sign up
-                                </button>
-                            </>
-                        )}
-                    </div>
+                                    <button
+                                        className="cursor-pointer px-3 py-2 bg-yellow-300 hover:bg-yellow-400 rounded-lg transition-colors"
+                                        onClick={() => setsignupopen(true)}
+                                    >
+                                        Sign up
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </ClientOnly>
                 </div>
             </nav>
 
