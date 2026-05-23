@@ -29,7 +29,7 @@ export class PaymentController {
       items: body?.items,
 
     });
-    console.log("Checkout session created:", result);
+    // console.log("Checkout session created:", result);
     return result;
   }
 

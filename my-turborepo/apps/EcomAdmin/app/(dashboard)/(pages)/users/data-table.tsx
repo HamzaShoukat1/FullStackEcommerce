@@ -63,7 +63,6 @@ export function DataTable<TData, TValue>({
 
     mutationFn: async (userIds) => {
       await Promise.all(userIds.map(id => deleteUser(id)));
-
     },
 
     onSuccess: () => {

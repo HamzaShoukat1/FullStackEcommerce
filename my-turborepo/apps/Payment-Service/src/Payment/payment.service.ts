@@ -116,7 +116,7 @@ export class PaymentService {
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
         const userId = parseInt(session.metadata?.userId as string);
         if (!userId || isNaN(userId)) {
-            Logger.error('Missing or invalid userId in session metadata:', session.metadata);
+            // Logger.error('Missing or invalid userId in session metadata:', session.metadata);
             throw new Error('Missing or invalid userId in session metadata');
         }
 
@@ -125,11 +125,11 @@ export class PaymentService {
         try {
             metaDataItems = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
             if (!Array.isArray(metaDataItems) || metaDataItems.length === 0) {
-                Logger.error('No items found in session metadata:', session.metadata);
+                // Logger.error('No items found in session metadata:', session.metadata); 
                 throw new Error('No items found in session metadata');
             }
         } catch (err) {
-            Logger.error('Failed to parse items from session metadata:', err, session.metadata);
+            // Logger.error('Failed to parse items from session metadata:', err, session.metadata);
             throw new Error('Failed to parse items from session metadata');
         }
 
@@ -159,7 +159,7 @@ export class PaymentService {
                 const notification = await tx.notification.create({
                     data: {
                         userId: userId,
-                        orderId: order.id, // 👈 Links perfectly to your real Order primary key
+                        orderId: order.id,
                         title: "Order Placed Successfully",
                         message: `Your order #${order.id} has been placed successfully.`,
                         isRead: false
