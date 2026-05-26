@@ -54,7 +54,6 @@ export class AuthController {
             role: user.role
         }
 
-        // return this.authService.currentUser((req as any).user.sub);
     }
 
 

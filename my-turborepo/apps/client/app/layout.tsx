@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "./provider";
-import "../globals.css";
+import "./global.css";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import ReduxProvider from "./Store/provider";
 import { SocketProvider } from "./socket-provider";
+import SessionExpiredListener from "@/components/Dialogs/GlobalSeesionExpired";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
             <Providers>
               <ReduxProvider>
                 <Navbar />
+                <SessionExpiredListener />
                 {children}
                 <Footer />
               </ReduxProvider>

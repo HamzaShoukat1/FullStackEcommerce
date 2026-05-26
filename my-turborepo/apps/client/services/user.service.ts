@@ -31,3 +31,9 @@ export async function logoutUser() {
     });
 }
 
+export async function refreshToken() {
+    return apiClient(`${BackenedUrl}/auth/refresh`, {
+        method: "POST",
+    });
+}
+
