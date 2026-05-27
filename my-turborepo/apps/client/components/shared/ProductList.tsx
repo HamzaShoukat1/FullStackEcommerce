@@ -146,21 +146,20 @@ import ClientOnly from "@/app/hooks/onlyClient";
 // ]
 
 
-export default function ProductList({ params }: { params?: "homepage" | "products" }) {
+export default function ProductList({ params , category:propCategory }: { params?: "homepage" | "products", category?: string },) {
     const searchParams = useSearchParams()
 
-    const category = searchParams.get("category") || "all";
+    const category =   propCategory || searchParams.get("category") || "all";
     const sort = searchParams.get("sort") || "newest";
     const search = searchParams.get("search") || "";
 
 
 
 
-    const { data: productsData, isLoading, isError, isFetching } = useQuery({
+    const { data: productsData, isError } = useQuery({
         queryKey: ["products", category, params, sort, search],
         queryFn: () => getProducts({ category, params, sort, search }),
     })
-    console.log("SORT SENT:", sort);
 
 
     return (

@@ -5,7 +5,7 @@ export default async function Homepage({ searchParams }: { searchParams: Promise
     return (
         <div>
 
-            <ProductList category={category} params="products"/>
+            <ProductList params="products" category={category}/>
 
 
         </div>

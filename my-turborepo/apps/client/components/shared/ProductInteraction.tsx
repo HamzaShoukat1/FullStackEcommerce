@@ -1,6 +1,5 @@
 "use client";
 
-import { ProductDTO } from "@repo/shared";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/usereduxhook";

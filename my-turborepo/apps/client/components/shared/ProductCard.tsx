@@ -28,14 +28,24 @@ export default function ProductCard({ product }: { product: ProductDTO }) {
   }
 const handelAddtoCart = ()=> {
   dispatch(addToCart({
-    product,
-    quantity:1 ,
-    selectedSize:productsetType.size,
-    selectedColor:productsetType.color
+    product:{
+      data: product
+    },
+    quantity:1,
+    selectedSize: productsetType.size,
+    selectedColor: productsetType.color
   }))
 
+
+  console.log("Added to cart:", {
+    productId: product.id,
+    quantity: 1,
+    selectedSize: productsetType.size,
+    selectedColor: productsetType.color
+  });
+
 }
-    const imageSrc = (product.images as Record<string, string>)?.[productsetType.color.toLowerCase()] ;
+    const imageSrc = (product.images as Record<string, string>)?.[productsetType.color.toLowerCase()] || "";
 
 
   return (
@@ -47,7 +57,7 @@ const handelAddtoCart = ()=> {
         <div className="relative w-full aspect-2/3 bg-cover">
         {imageSrc ? (
                 <Image
-            src={(product.images as Record<string,string>)?.[productsetType.color] || ""}
+            src={imageSrc}
             alt={product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
