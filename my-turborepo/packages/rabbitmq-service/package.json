@@ -1,0 +1,32 @@
+{
+  "name": "@shared/rabbitmq",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.ts",
+    "./events/order-created": "./src/events/order-created.event.ts",
+    "./events/payment-created": "./src/events/payment-created.event.ts",
+    "./rabbitmq.module": "./src/rabbitmq.module.ts",
+    "./rabbitmq.service": "./src/rabbitmq.service.ts",
+    "./rabbitmq.constants": "./src/rabbitmq.constants.ts"
+  },
+  "scripts": {
+    "dev": "pnpm dlx tsx --env-file=.env --watch src/main.ts",
+    "test": "echo \"Error: no test specified\" && exit 1 "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/microservices": "^11.1.24",
+    "amqp-connection-manager": "^5.0.0",
+    "amqplib": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
+}

@@ -1,6 +1,5 @@
 
 import type { Product, Category } from "@repo/db"
-import  z from "zod"
 
 
 export type productType = Product

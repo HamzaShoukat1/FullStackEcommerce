@@ -14,6 +14,7 @@
     "./frontedDtos": "./frontedDtos/index.ts",
     "./interceptors": "./interceptors/response.interceptor.ts",
     "./ExceptionFilters": "./ExceptionFilters/ExceptionFilter.ts"
+    
   },
   "dependencies": {
     "@nestjs/common": "^11.1.17",
