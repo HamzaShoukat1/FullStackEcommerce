@@ -8,12 +8,18 @@ export default function SessionExpiredListener() {
     const [showDialog, setShowDialog] = useState(false);
 
     useEffect(() => {
-        const handler = () => setOpen(true);
+        const handler = () => {
+
+            if(showDialog) return; // If the sign-in dialog is already open, do not show the session expired notice again
+
+            setOpen(true);
+        }
+            
 
         window.addEventListener("auth:session-expired", handler);
 
         return () => window.removeEventListener("auth:session-expired", handler);
-    }, []);
+    }, [showDialog]);
 
     const handleOpenSignin = () => {
         setOpen(false);

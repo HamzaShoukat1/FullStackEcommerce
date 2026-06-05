@@ -28,6 +28,7 @@ export async function getCurrentUser() {
 export async function logoutUser() {
     return apiClient(`${BackenedUrl}/auth/logout`, {
         method: "POST",
+        
     });
 }
 

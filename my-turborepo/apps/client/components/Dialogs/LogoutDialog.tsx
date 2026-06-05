@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react"; // Added to manage dialog visibility
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,18 +22,22 @@ import { useRouter } from "next/navigation";
 export default function LogoutDialog() {
     const queryClient = useQueryClient();
     const router = useRouter();
+    const [isOpen, setIsOpen] = useState(false); // State to control dialog visibility
 
     const { mutate: logout, isPending } = useMutation({
         mutationFn: logoutUser,
+  
         onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: ["me"] });
+            setIsOpen(false); // FIX: Programmatically close the dialog immediately on success
+        queryClient.invalidateQueries({ queryKey: ["me"] });
             router.push("/");
         },
-       
+   
     });
 
     return (
-        <AlertDialog>
+        // FIX: Bound open and onOpenChange to local state
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
                 <Button className="cursor-pointer" variant="destructive">
                     Logout
@@ -55,7 +60,10 @@ export default function LogoutDialog() {
                     </AlertDialogCancel>
 
                     <AlertDialogAction
-                        onClick={() => logout()}
+                        onClick={(e) => {
+                            e.preventDefault(); // Safe to keep now since state handles closing
+                            logout();
+                        }}
                         disabled={isPending}
                         className="bg-red-600 cursor-pointer hover:bg-red-700 text-white rounded-md flex items-center gap-2"
                     >

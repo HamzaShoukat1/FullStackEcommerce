@@ -26,8 +26,14 @@ const steps = [
 
 // 1. The Core UI Component that uses search parameters safely
 function CartContent() {
-  const { totalAmount } = useAppSelector(state => state.cart)
+  // FIX: Combined into a single destructuring assignment from the cart slice
+  const { totalAmount, cartItems } = useAppSelector(state => state.cart)
   const [Shippingform, setShippingform] = useState<shippingformInputs | null>(null)
+
+  // Determine the item count safely
+  // const itemCount = cartItems ? cartItems.length : 0
+
+  const isCartEmpty = cartItems.length === 0
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -87,10 +93,18 @@ function CartContent() {
 
           {activeStep === 1 && (
             <button 
+              disabled={isCartEmpty} // FIX: Locks interaction when item array is empty
               onClick={() => router.push("/cart?step=2", { scroll: false })} 
-              className="flex items-center gap-2 hover:bg-gray-900 transition-all duration-300 justify-center w-full bg-gray-800 text-white p-2 rounded-lg cursor-pointer"
+              // FIX: Applied visual disabled states and pointer events dynamically
+              className={`flex items-center gap-2 transition-all duration-300 justify-center w-full p-2 rounded-lg ${
+                isCartEmpty 
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
+                  : "bg-gray-800 text-white cursor-pointer hover:bg-gray-900"
+              }`}
             >
-              Continue
+              {/* FIX: Corrected text logic rendering appropriate directions based on state */}
+              {isCartEmpty ? "Add items to proceed" : "Continue to Shipping"}
+
               <ArrowRight className="w-3 h-3" />
             </button>
           )}

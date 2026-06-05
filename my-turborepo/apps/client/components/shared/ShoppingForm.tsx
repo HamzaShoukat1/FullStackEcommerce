@@ -7,7 +7,10 @@ import { removeFromCart } from "@/app/Store/features/cartSlice"
 import Image from "next/image"
 export default function ShoppingForm() {
   const dispatch = useAppDispatch()
-  const { cartItems, totalAmount } = useAppSelector(state => state.cart)
+  const { cartItems } = useAppSelector(state => state.cart)
+
+
+  
 
 
   return (
