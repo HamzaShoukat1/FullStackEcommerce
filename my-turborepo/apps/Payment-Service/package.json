@@ -16,16 +16,22 @@
   "dependencies": {
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.1.17",
+    "@repo/db": "workspace:*",
+    "@repo/rabbitmq-service": "workspace:*",
+    "@repo/shared": "workspace:*",
+    "cookie-parser": "^1.4.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "stripe": "^22.1.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/shared": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/cookie-parser": "^1.4.9",
     "@types/node": "^20.19.37",
+    "i": "^0.3.7",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   }

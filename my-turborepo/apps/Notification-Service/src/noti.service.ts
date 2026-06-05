@@ -1,14 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import {  Injectable } from "@nestjs/common";
 import { prisma } from "@repo/db";
 
 @Injectable()
 
 export class NotificationService {
 
+
     async createNotification(userId: number, orderId: string) {
         return await prisma.notification.create({
             data:{
-                userId,
+                userId ,
                 orderId,
                 title:"Order Placed Successfully",
                 message: `Your order #${orderId} has been placed successfully.`
@@ -28,10 +29,10 @@ export class NotificationService {
         })
 
     };
-    async markAsRead(notificationId:string){
+    async markAsRead(notificationId:number){
         return await prisma.notification.update({
             where:{
-                id:Number(notificationId)
+                id:notificationId
             },
             data:{
                 isRead:true

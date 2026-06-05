@@ -14,12 +14,12 @@
     "./frontedDtos": "./frontedDtos/index.ts",
     "./interceptors": "./interceptors/response.interceptor.ts",
     "./ExceptionFilters": "./ExceptionFilters/ExceptionFilter.ts"
-    
   },
   "dependencies": {
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/jwt": "^11.0.2",
+    "@nestjs/microservices": "^11.1.24",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "rxjs": "^7.8.2",

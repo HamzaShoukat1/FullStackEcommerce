@@ -1,31 +1,29 @@
-export const getDataFromBrowwer = ()=>{
+export const getDataFromBrowwer = <T>(): T | undefined => {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return undefined;
+  }
+  
   try {
-    const serializedState = localStorage.getItem('cart')
-    if(!serializedState)
-    {
-      return undefined
-
+    const serializedState = localStorage.getItem('cart');
+    if (!serializedState) {
+      return undefined;
     }
-  return JSON.parse(serializedState)
-    
+    return JSON.parse(serializedState) as T;
   } catch (err) {
-    console.log('failer', err);
-    return undefined
-    
+    console.error('Failed to parse cart state:', err);
+    return undefined;
   }
 };
 
-
-export const saveDatainBrowser = (state:any)=>{
-  try {
-
-
-    localStorage.setItem('cart', JSON.stringify(state)) //Browsers only store strings in localStorage.
-    
-  } catch (err) {
-    console.log('failed', err)
-    return undefined
-    
+export const saveDatainBrowser = (state: unknown): void => {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return;
   }
 
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem('cart', serializedState);
+  } catch (err) {
+    console.error('Failed to save cart state:', err);
+  }
 };

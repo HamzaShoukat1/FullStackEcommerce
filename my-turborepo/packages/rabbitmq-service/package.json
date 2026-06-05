@@ -1,5 +1,5 @@
 {
-  "name": "@shared/rabbitmq",
+  "name": "@repo/rabbitmq-service",
   "version": "1.0.0",
   "description": "",
   "type": "module",

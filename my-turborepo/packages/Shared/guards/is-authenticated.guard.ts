@@ -9,6 +9,11 @@ export class IsAuthenticatedGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
+    // Allow preflight OPTIONS requests without authentication
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     const authorizationHeader = request.headers?.authorization;
 
     const bearerToken =

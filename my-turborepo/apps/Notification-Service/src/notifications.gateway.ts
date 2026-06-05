@@ -8,9 +8,11 @@ import { getAccessTokenSecret } from "@repo/shared";
 @Injectable()
 @WebSocketGateway({
     cors: {
-        origin: 'http://localhost:3001',
-        methods: ['GET', 'POST'],
-        credentials: true
+        origin: ['http://localhost:3001', 'http://localhost:3000', 'http://localhost:3010'],
+        methods: ['GET', 'POST', 'OPTIONS'],
+        credentials: true,
+        allowEIO3: true,
+        allowedHeaders: ['Content-Type', 'Authorization']
     },
 })
 

@@ -53,7 +53,7 @@ export class PaymentController {
     if (!sessionId) {
       throw new UnauthorizedException("Session ID is required");
     }
-    return this.paymentService.getcurrentSession(sessionId);
+    return this.paymentService.getCurrentSession(sessionId);
   }
 
 

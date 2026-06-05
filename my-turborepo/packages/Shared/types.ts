@@ -171,3 +171,15 @@ export type Product = {
     colors: string[];
     images: Record<string, string>
 };
+
+export type CreateOrder = {
+    userId: number;
+    email: string;
+    amount: number;
+    shippingAddress: any;
+    items: {
+        productId: string;
+        quantity: number;
+        price: number;
+    }[];
+}

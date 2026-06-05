@@ -19,6 +19,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { getAccessTokenSecret, getJwtAccessExpires, ResponseInterceptor } from '@repo/shared';
 import { JwtModule } from '@nestjs/jwt';
+import { Transport } from '@repo/rabbitmq-service';
 
 
 async function bootstrap() {
@@ -27,25 +28,32 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
+    // Connect to RabbitMQ as microservice consumer
+    app.connectMicroservice({
+      transport: Transport.RMQ,
+      options: {
+        urls: [process.env.RABBITMQ_URL || "amqps://aigxmdvw:LRq8AnXoyWSCnAT0bxYQxNLa--dVZzUc@yak.lmq.cloudamqp.com/aigxmdvw"],
+        queue: "order_queue",
+        queueOptions: {
+          durable: true
+        }
+      }
+    });
+
     // Security middleware
     app.use(cookieParser());
     app.useGlobalInterceptors(new ResponseInterceptor());
     app.enableCors({
-      origin: ['http://localhost:3001','http://localhost:3010'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      origin: ['http://localhost:3001', 'http://localhost:3000', 'http://localhost:3010'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       credentials: true,
     })
     // app.use(helmet());
-    const allowedOrigins = ['http://localhost:3001']
-    app.enableCors({
-      origin: allowedOrigins,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-      credentials: true,
-    });
-     JwtModule.register({
-      global:true,
-      secret:getAccessTokenSecret(),
-      signOptions:{expiresIn:getJwtAccessExpires() as any}
+
+    JwtModule.register({
+      global: true,
+      secret: getAccessTokenSecret(),
+      signOptions: { expiresIn: getJwtAccessExpires() as any }
     })
     // Global pipes
     app.useGlobalPipes(
@@ -72,7 +80,9 @@ async function bootstrap() {
     // const port = ('port', 3000);
     const port = process.env.PORT || 3015;
     await app.listen(port);
+    await app.startAllMicroservices();
     logger.log(`Application is running on: http://localhost:${port}`);
+    logger.log(`Microservice listening on queue: order_queue`);
 
   } catch (error) {
     logger.error('Error during application bootstrap:', error);

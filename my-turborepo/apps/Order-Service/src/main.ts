@@ -19,6 +19,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { getAccessTokenSecret, getJwtAccessExpires, ResponseInterceptor } from '@repo/shared';
 import { JwtModule } from '@nestjs/jwt';
+import { Transport } from '@repo/rabbitmq-service';
 
 
 async function bootstrap() {
@@ -26,6 +27,18 @@ async function bootstrap() {
 
   try {
     const app = await NestFactory.create(AppModule);
+
+    // Connect to RabbitMQ as microservice consumer
+    app.connectMicroservice({
+      transport: Transport.RMQ,
+      options: {
+        urls: [process.env.RABBITMQ_URL || "amqps://aigxmdvw:LRq8AnXoyWSCnAT0bxYQxNLa--dVZzUc@yak.lmq.cloudamqp.com/aigxmdvw"],
+        queue: "payment_queue",
+        queueOptions: {
+          durable: true
+        }
+      }
+    });
 
     // Security middleware
     app.use(cookieParser());
@@ -68,7 +81,9 @@ async function bootstrap() {
     // const port = ('port', 3000);
     const port = process.env.PORT || 3011
     await app.listen(port);
+    await app.startAllMicroservices();
     logger.log(`Application is running on: http://localhost:${port}`);
+    logger.log(`Microservice listening on queue: payment_queue`);
 
   } catch (error) {
     logger.error('Error during application bootstrap:', error);

@@ -111,7 +111,7 @@ model OrderItem {
 }
 
 model Notification {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(autoincrement())
   userId    Int
   orderId   String
   title     String

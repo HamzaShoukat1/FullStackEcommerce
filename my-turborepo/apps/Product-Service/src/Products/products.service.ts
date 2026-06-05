@@ -130,5 +130,8 @@ export class ProductsService {
     });
 
     return deleteProduct
-  }
+  };
+
+
+
 }

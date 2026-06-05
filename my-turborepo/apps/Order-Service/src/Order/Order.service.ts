@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { prisma, type Order } from '@repo/db';
 import { startOfMonth, subMonths, format } from 'date-fns';
-import { OrderChartType } from "@repo/shared"
-
+import { OrderChartType, CreateOrder } from "@repo/shared"
+import { ClientProxy } from "@repo/rabbitmq-service"
+import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class OrderService {
+    constructor(
+        @Inject("ORDER_PUBLISHER")
+        private readonly client: ClientProxy
+    ) { }
     async getUserOrders(userId: number): Promise<Order[]> {
         const orders = await prisma.order.findMany({
             where: {
@@ -15,11 +20,11 @@ export class OrderService {
         return orders;
     }
 
-    async getAllOrders(limit?:number): Promise<Pick<Order, "id" | "email" | "amount" | "status" | "createdAt">[]> {
+    async getAllOrders(limit?: number): Promise<Pick<Order, "id" | "email" | "amount" | "status" | "createdAt">[]> {
 
         return await prisma.order.findMany({
             take: limit,
-                 orderBy: {
+            orderBy: {
                 createdAt: "desc"
             },
             select: {
@@ -29,7 +34,7 @@ export class OrderService {
                 status: true,
                 createdAt: true
             }
-          
+
         })
 
     };
@@ -91,7 +96,57 @@ export class OrderService {
         return results
 
 
+    };
+    async createOrder(data: CreateOrder[]): Promise<Order> {
+        try {
+            
+            const order = await prisma.order.create({
+                data: {
+                    userId: parseInt(data[0]?.userId as unknown as string),
+                    email: data[0]?.email as string,
+                    amount: data[0]?.amount as number,
+                    shippingAddress: data[0]?.shippingAddress,
+                    status: "SUCCESS",
+                    products: {
+                        create: data[0]?.items.map((item) => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            price: item.price
+                        }))
+                    }
+                },
+                select: {
+                    id: true,
+                    userId: true,
+                    email: true,
+                    amount: true,
+                    shippingAddress: true,
+                    status: true,
+                    createdAt: true,
+                    updatedAt: true,
+
+                }
+
+            });
+            
+
+            await firstValueFrom(
+                this.client.emit("order.created", {
+                    orderId: order.id,
+                    userId: order.userId,
+                    email: order.email,
+                    items: data[0]?.items
+                })
+            )
+            
+
+            return order
+        } catch (error) {
+            throw error;
+        }
+
     }
+
 
 
 }

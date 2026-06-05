@@ -19,18 +19,18 @@ export class NotiController {
 
     @Get()
     async getNotifications(@Req() req: AuthRequest) {
-        const userId = req.user.sub
+        const userId = Number(req.user.sub)
         return await this.notificationService.getNotificationForUser(userId)
     };
 
     @Patch(':id/read')
     async markAsRead(@Param('id') id: string) {
-        return await this.notificationService.markAsRead(id)
+        return await this.notificationService.markAsRead(Number(id))
     }
 
     @Patch('read-all')
     async markAllAsRead(@Req() req: AuthRequest) {
-        const userId = req.user.sub
+        const userId = Number(req.user.sub)
         return await this.notificationService.markAllAsRead(userId)
     }
 

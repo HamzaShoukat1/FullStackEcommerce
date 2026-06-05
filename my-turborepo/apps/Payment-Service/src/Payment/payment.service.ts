@@ -1,13 +1,18 @@
 import "dotenv/config";
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { prisma } from "@repo/db";
 import stripe from "../utils/stripe.service";
 import { StripeSessionResponseDto } from "../dto";
 import { Stripe } from "stripe";
+import { ClientProxy } from "@repo/rabbitmq-service/rabbitmq.constants";
+import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class PaymentService {
-    constructor() { }
+    constructor(
+        @Inject("PAYMENT_PUBLISHER")
+        private readonly client: ClientProxy
+    ) { }
 
     async createCheckoutSession(data: {
         userId: number;
@@ -34,7 +39,7 @@ export class PaymentService {
             }));
         }
 
-        const lineItems = (items || []).map(item => ({
+        const lineItems = items.map(item => ({
             price_data: {
                 currency: "usd",
                 unit_amount: Math.round(Number(item.price) * 100),
@@ -61,28 +66,29 @@ export class PaymentService {
         return {
             client_secret: session.client_secret,
         };
-    };
+    }
 
-    async getcurrentSession(session_id: string): Promise<StripeSessionResponseDto> {
-        const session = await stripe.checkout.sessions.retrieve(session_id, {
+    async getCurrentSession(sessionId: string): Promise<StripeSessionResponseDto> {
+        const session = await stripe.checkout.sessions.retrieve(sessionId, {
             expand: ["line_items"],
         });
+
         if (!session) {
             throw new NotFoundException("Session not found");
         }
 
         return {
-            status: session?.payment_status || "unknown",
-            amount_total: session?.amount_total || 0,
-            customer_email: session?.customer_email || "unknown",
+            status: session.payment_status || "unknown",
+            amount_total: session.amount_total || 0,
+            customer_email: session.customer_email || "unknown",
             items: session.line_items?.data.map((item) => ({
                 name: item.description || "unknown",
                 price: item.price?.unit_amount || 0,
                 quantity: item.quantity || 0,
             })) || [],
             id: session.id,
-        }
-    };
+        };
+    }
 
     async processWebhook(rawBody: Buffer, signature: string) {
         const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -101,83 +107,48 @@ export class PaymentService {
             );
         }
 
-        switch (event.type) {
-            case 'checkout.session.completed':
-                const result = await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
-                Logger.log('Checkout session completed processing successfully.', result);
-                break;
-            default:
-                Logger.log('Unhandled event type:', event.type);
+        if (event.type === 'checkout.session.completed') {
+            await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
         }
 
         return { received: true };
     }
 
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-        const userId = parseInt(session.metadata?.userId as string);
-        if (!userId || isNaN(userId)) {
-            // Logger.error('Missing or invalid userId in session metadata:', session.metadata);
+        const userId = Number.parseInt(session.metadata?.userId as string, 10);
+        if (!userId || Number.isNaN(userId)) {
             throw new Error('Missing or invalid userId in session metadata');
         }
 
         const amount = session.amount_total ? session.amount_total / 100 : 0;
         let metaDataItems: any[] = [];
+        
         try {
             metaDataItems = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
             if (!Array.isArray(metaDataItems) || metaDataItems.length === 0) {
-                // Logger.error('No items found in session metadata:', session.metadata); 
                 throw new Error('No items found in session metadata');
             }
-        } catch (err) {
-            // Logger.error('Failed to parse items from session metadata:', err, session.metadata);
+        } catch {
             throw new Error('Failed to parse items from session metadata');
         }
 
-        try {
-            const result = await prisma.$transaction(async (tx) => {
+        const shippingAddress = session.customer_details?.address ? JSON.parse(JSON.stringify(session.customer_details.address)) : {};
 
-                const order = await tx.order.create({
-                    data: {
-                        userId: userId,
-                        email: session.customer_details?.email || session.customer_email || "unknown",
-                        amount: amount,
-                        status: "SUCCESS",
-                        shippingAddress: session.customer_details?.address
-                            ? JSON.parse(JSON.stringify(session.customer_details.address))
-                            : {},
-                        products: {
-                            create: metaDataItems.map((item: any) => ({
-                                productId: item.productId,
-                                quantity: item.quantity || 1,
-                                price: typeof item.price === 'number' ? item.price : 0,
-                            })),
-                        },
-                        createdAt: new Date(),
-                    },
-                });
+        await firstValueFrom(
+            this.client.emit("payment.completed", {
+                userId,
+                email: session.customer_details?.email || session.customer_email || "unknown",
+                amount,
+                status: "SUCCESS",
+                shippingAddress,
+                items: metaDataItems.map((item: any) => ({
+                    productId: item.productId,
+                    quantity: item.quantity || 1,
+                    price: typeof item.price === 'number' ? item.price : 0,
+                })),
+            })
+        );
 
-                const notification = await tx.notification.create({
-                    data: {
-                        userId: userId,
-                        orderId: order.id,
-                        title: "Order Placed Successfully",
-                        message: `Your order #${order.id} has been placed successfully.`,
-                        isRead: false
-                    }
-                });
-
-                // 3. Clear out the database shopping cart list items inside the transaction safety window
-                // await tx.cartItem.deleteMany({ where: { userId } });
-
-                return { order, notification };
-            });
-
-            console.log("✅ Order, Notification, and Cart Cleanup completed successfully:", result);
-            return result;
-
-        } catch (error) {
-            Logger.error('❌ Database error saving order/notification package:', error);
-            throw error;
-        }
+        return { received: true };
     }
 }
