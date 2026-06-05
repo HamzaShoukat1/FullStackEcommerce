@@ -109,6 +109,15 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.2)(react@19.2.4)
+      '@tanstack/query-async-storage-persister':
+        specifier: ^5.100.9
+        version: 5.100.9
+      '@tanstack/react-query':
+        specifier: ^5.100.8
+        version: 5.100.9(react@19.2.4)
+      '@tanstack/react-query-persist-client':
+        specifier: ^5.100.9
+        version: 5.100.9(@tanstack/react-query@5.100.9(react@19.2.4))(react@19.2.4)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -151,6 +160,9 @@ importers:
       shadcn:
         specifier: ^4.0.8
         version: 4.1.0(@types/node@20.19.37)(typescript@5.9.2)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -8512,10 +8524,21 @@ snapshots:
       '@tanstack/react-query': 5.100.9(react@19.2.3)
       react: 19.2.3
 
+  '@tanstack/react-query-persist-client@5.100.9(@tanstack/react-query@5.100.9(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@tanstack/query-persist-client-core': 5.100.9
+      '@tanstack/react-query': 5.100.9(react@19.2.4)
+      react: 19.2.4
+
   '@tanstack/react-query@5.100.9(react@19.2.3)':
     dependencies:
       '@tanstack/query-core': 5.100.9
       react: 19.2.3
+
+  '@tanstack/react-query@5.100.9(react@19.2.4)':
+    dependencies:
+      '@tanstack/query-core': 5.100.9
+      react: 19.2.4
 
   '@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
@@ -11794,6 +11817,11 @@ snapshots:
     dependencies:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
+
+  sonner@2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   source-map-js@1.2.1: {}
 

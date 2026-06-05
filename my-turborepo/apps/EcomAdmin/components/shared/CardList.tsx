@@ -41,7 +41,7 @@ const CardList = async ({ title }: { title: string }) => {
                   {item.name}
                 </CardTitle>
               </CardContent>
-              <CardFooter className="p-0">${item.price.toString()}K</CardFooter>
+              <CardFooter className="p-0">${item.price.toString()}</CardFooter>
             </Card>
           ))
           : orders.map((item) => (
@@ -56,7 +56,7 @@ const CardList = async ({ title }: { title: string }) => {
                 </CardTitle>
                 <Badge variant="secondary" className="mb-3">{item.status}</Badge>
               </CardContent>
-              <CardFooter className="p-0">${item.amount / 1000}K</CardFooter>
+              <CardFooter className="p-0">${item.amount}</CardFooter>
             </Card>
           ))}
       </div>
